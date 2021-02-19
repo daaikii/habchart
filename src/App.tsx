@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import "./App.css";
+import Hab from "./components/Hab";
+import Auth from "./components/Auth";
+import { Switch, Route, BrowserRouter } from "react-router-dom";
+import { auth } from "./firebase";
+import UserProvider, { useLogin,useLogout } from "./context/userContext";
 
-function App() {
+const App = () => {
+  const login = useLogin();
+  const logout = useLogout();
+  useEffect(() => {
+    const unSub = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        login(authUser);
+      }else{
+        logout();
+      }
+    });
+    return ()=>unSub()
+  },[login||logout]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserProvider>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/hab" component={Hab} />
+          <Route path="/" component={Auth} />
+        </Switch>
+      </BrowserRouter>
+    </UserProvider>
   );
-}
+};
 
 export default App;
