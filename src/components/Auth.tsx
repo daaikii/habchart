@@ -8,6 +8,7 @@ const Auth = () => {
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const updateUserProfile = useUpdateUserProfile()
 
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
@@ -30,7 +31,6 @@ const Auth = () => {
       displayName: userName,
       photoURL: url,
     });
-    const updateUserProfile = useUpdateUserProfile()
     updateUserProfile(authUser)
   };
 
@@ -43,7 +43,7 @@ const Auth = () => {
         <div className="authForm">
           {!isLogin && (
             <>
-              <form className="form-auth">
+              <form className="newuser-form">
                 <label>
                   name
                   <input
@@ -62,7 +62,7 @@ const Auth = () => {
               </form>
             </>
           )}
-          <form className="form-auth">
+          <form className="login-form">
             <input
               type="text"
               name="email"

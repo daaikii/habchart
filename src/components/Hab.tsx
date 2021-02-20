@@ -4,8 +4,15 @@ const Hab = () => {
   return (
     <>
       <div className="container">
-        <div className="chart"></div>
-        <div className="form-chart"></div>
+        <div className="hab-chart"></div>
+        <div className=""></div>
+        <div className="chart-form">
+          <form>
+            <input
+              name=""
+            />
+          </form>
+        </div>
       </div>
     </>
   );
