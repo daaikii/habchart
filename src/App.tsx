@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useContext } from "react";
 import "./App.css";
 import Hab from "./components/Hab";
 import Auth from "./components/Auth";
-import { Switch, Route, BrowserRouter } from "react-router-dom";
 import { auth } from "./firebase";
-import UserProvider, { useLogin,useLogout } from "./context/userContext";
+import UserProvider, { useLogin,useLogout,AuthContext } from "./context/userContext";
 
 const App = () => {
+  const user = useContext(AuthContext);
   const login = useLogin();
   const logout = useLogout();
   useEffect(() => {
@@ -18,16 +18,19 @@ const App = () => {
       }
     });
     return ()=>unSub()
-  },[login||logout]);
+  },[useLogin||useLogout]);
+  
   return (
-    <UserProvider>
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/hab" component={Hab} />
-          <Route path="/" component={Auth} />
-        </Switch>
-      </BrowserRouter>
-    </UserProvider>
+  <>
+    {user.uid?
+      <div>
+        <Hab/>
+      </div>
+      :<>
+      <Auth/>
+      </>
+    }
+  </>
   );
 };
 
