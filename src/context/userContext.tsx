@@ -6,31 +6,37 @@ type Opetype = {
   updateUserProfile:(authUser:any)=>void
 };
 
-const AuthContext = createContext<{
+type USER ={
   uid:string
   photoURL:string
-  displayName:string
-}|null>(null);
+  displayName:string 
+}
 
-const AuthOpeContext = createContext<Opetype>({
-  login: () => console.error("Providerを指定してください"),
-  logout: () => console.error("Providerを指定してください"),
+export const AuthContext = createContext<USER>({
+  uid:"",
+  photoURL:"",
+  displayName:""
+});
+
+export const AuthOpeContext = createContext<Opetype>({
+  login: (_) => console.error("Providerを指定してください"),
+  logout: () =>{},
   updateUserProfile:()=> console.error("Providerを指定してください")
 });
 
 const UserProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState(
-    {
-      uid: "",
-      photoURL: "",
-      displayName: "",
-    },
-  );
+  const [user, setUser] = useState<USER>({
+    uid:"",
+    photoURL:"",
+    displayName:""
+  });
+
   const login = (authUser:any)=>setUser({
     uid: authUser.uid,
     photoURL: authUser.photoURL,
     displayName: authUser.displayName,
   })
+  
   const logout=()=>{
     setUser({
       uid:"",
@@ -55,7 +61,6 @@ const UserProvider: React.FC = ({ children }) => {
 export const useLogin = () => useContext(AuthOpeContext).login;
 export const useLogout = () => useContext(AuthOpeContext).logout;
 export const useUpdateUserProfile = () =>useContext(AuthOpeContext).updateUserProfile;
-
-export const useUser = useContext(AuthContext);
+export const useUser=()=>useContext(AuthContext)
 
 export default UserProvider;
