@@ -61,6 +61,5 @@ const UserProvider: React.FC = ({ children }) => {
 export const useLogin = () => useContext(AuthOpeContext).login;
 export const useLogout = () => useContext(AuthOpeContext).logout;
 export const useUpdateUserProfile = () =>useContext(AuthOpeContext).updateUserProfile;
-export const useUser=()=>useContext(AuthContext)
 
 export default UserProvider;
