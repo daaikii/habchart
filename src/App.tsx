@@ -1,5 +1,5 @@
 import React, { useEffect,useContext } from "react";
-import "./App.css";
+import "./App.scss";
 import Hab from "./components/Hab";
 import Auth from "./components/Auth";
 import { auth } from "./firebase";
