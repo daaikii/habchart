@@ -20,7 +20,7 @@ export const AuthContext = createContext<USER>({
 
 export const AuthOpeContext = createContext<Opetype>({
   login: (_) => console.error("Providerを指定してください"),
-  logout: () =>{},
+  logout: () =>console.error("Providerを指定してください"),
   updateUserProfile:()=> console.error("Providerを指定してください")
 });
 

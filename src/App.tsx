@@ -1,9 +1,11 @@
 import React, { useEffect,useContext } from "react";
-import "./App.scss";
-import Hab from "./components/Hab";
+import "./App.module.css";
+import Post from "./components/Post";
 import Auth from "./components/Auth";
+import Chart from "./components/Chart"
 import { auth } from "./firebase";
-import UserProvider, { useLogin,useLogout,AuthContext } from "./context/userContext";
+import { useLogin,useLogout,AuthContext } from "./context/userContext";
+import {BrowserRouter as Router,Switch,Route} from 'react-router-dom'
 
 const App = () => {
   const user = useContext(AuthContext);
@@ -22,16 +24,19 @@ const App = () => {
   },[useLogin||useLogout]);
   
   return (
-  <>
-    {user.uid?
-      <div>
-        <Hab/>
-      </div>
-      :<>
-      <Auth/>
-      </>
-    }
-  </>
+  <Router>
+      {user.uid?
+        <div>
+          <Switch>
+            <Route exact path="/post" component={Post}/>
+            <Route exact path="/" component={Chart}/>
+          </Switch>
+        </div>
+        :<div>
+          <Route component={Auth}/>
+        </div>
+      }
+  </Router>
   );
 };
 
