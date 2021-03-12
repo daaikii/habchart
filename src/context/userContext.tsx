@@ -24,7 +24,7 @@ export const AuthOpeContext = createContext<Opetype>({
   updateUserProfile:()=> console.error("Providerを指定してください")
 });
 
-const UserProvider: React.FC = ({ children }) => {
+const UserProvider: React.FC = ( {children} ) => {
   const [user, setUser] = useState<USER>({
     uid:"",
     photoURL:"",

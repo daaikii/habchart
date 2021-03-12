@@ -1,13 +1,12 @@
 import React, { useEffect,useContext } from "react";
 import "./App.module.css";
-import Post from "./components/Post";
 import Auth from "./components/Auth";
-import Chart from "./components/Chart"
+import Feed from "./components/Feed"
 import { auth } from "./firebase";
 import { useLogin,useLogout,AuthContext } from "./context/userContext";
 import {BrowserRouter as Router,Switch,Route} from 'react-router-dom'
 
-const App = () => {
+const App:React.FC = () => {
   const user = useContext(AuthContext);
   const login = useLogin();
   const logout = useLogout();
@@ -27,13 +26,10 @@ const App = () => {
   <Router>
       {user.uid?
         <div>
-          <Switch>
-            <Route exact path="/post" component={Post}/>
-            <Route exact path="/" component={Chart}/>
-          </Switch>
+          <Feed/>
         </div>
         :<div>
-          <Route component={Auth}/>
+          <Auth/>
         </div>
       }
   </Router>
