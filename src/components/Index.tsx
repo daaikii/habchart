@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import {setDoc} from '../context/docIdContext'
 
 type PROPS = {
   data: {
+    id:string;
     categorie: string;
     expense: string;
     timestamp: any;
   }[];
 };
+type DOC={
+    id: string;
+    categorie: string;
+    expense: string;
+    timestamp: any;
+}
 
-const Index: React.FC<PROPS> = ({ data }) => {
+const Index: React.FC<PROPS> = ( {data} ) => {
   const [minValue, setMinValue] = useState("");
   const [maxValue, setMaxValue] = useState("");
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -19,7 +27,14 @@ const Index: React.FC<PROPS> = ({ data }) => {
     } else {
       console.log("");
     }
-  };
+  }
+  const history=useHistory()
+  const setId=setDoc()
+  const handleClick=(key:DOC)=>{
+    setId(key.id)
+    history.push("/show")
+  }
+  
   return (
     <div className="container">
       <div className="serch-form">
@@ -62,7 +77,7 @@ const Index: React.FC<PROPS> = ({ data }) => {
               </tr>
               {data.map((key,index) => (
                 <tr key={index}>
-                  <td>{new Date(key.timestamp?.toDate()).toLocaleString()}</td>
+                  <td onClick={()=>handleClick(key)} >{new Date(key.timestamp?.toDate()).toLocaleString()}</td>
                   <td>{key.categorie}</td>
                   <td>{key.expense}円</td>
                 </tr>

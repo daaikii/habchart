@@ -4,7 +4,6 @@ import Auth from "./components/Auth";
 import Feed from "./components/Feed"
 import { auth } from "./firebase";
 import { useLogin,useLogout,AuthContext } from "./context/userContext";
-import {BrowserRouter as Router,Switch,Route} from 'react-router-dom'
 
 const App:React.FC = () => {
   const user = useContext(AuthContext);
@@ -23,7 +22,7 @@ const App:React.FC = () => {
   },[useLogin||useLogout]);
   
   return (
-  <Router>
+    <>
       {user.uid?
         <div>
           <Feed/>
@@ -32,7 +31,7 @@ const App:React.FC = () => {
           <Auth/>
         </div>
       }
-  </Router>
+    </>
   );
 };
 
