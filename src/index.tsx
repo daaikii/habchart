@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import UserProvider from "./context/userContext"
 import reportWebVitals from "./reportWebVitals";
-import DocIdProvider from "./context/docIdContext";
+import DocIdProvider from "./context/idContext";
 
 ReactDOM.render(
   <React.StrictMode>

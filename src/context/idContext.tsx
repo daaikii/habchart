@@ -9,10 +9,13 @@ const DocOpeContext=createContext<SETDOCID>({
 export const DocContext=createContext("")
 
 const DocIdProvider:React.FC = ({children}) => {
+
   const [id,setId]=useState("")
+
   const setDocId=(id:string)=>{
     setId(id)
   }
+
   
   return (
     <DocOpeContext.Provider value={{setDocId}}>
@@ -23,6 +26,6 @@ const DocIdProvider:React.FC = ({children}) => {
   )
 }
 
-export const setDoc=()=>useContext(DocOpeContext).setDocId
+export const useSetDoc=()=>useContext(DocOpeContext).setDocId
 
 export default DocIdProvider

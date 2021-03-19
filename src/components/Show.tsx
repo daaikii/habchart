@@ -1,7 +1,7 @@
 import React,{useState,useEffect,useContext} from 'react'
 import {useHistory} from 'react-router-dom'
 import {auth,db} from '../firebase'
-import {DocContext} from '../context/docIdContext'
+import {useSetDoc,DocContext} from '../context/idContext'
 
 type SETDOC={
   doc:string
@@ -12,8 +12,9 @@ const Show:React.FC = () => {
   const [expense,setExpense]=useState("")
   const [submit,setSubmit]=useState(false)
   const [isNan,setIsNan]=useState(false)
-  const doc=useContext(DocContext)
+  const docId=useContext(DocContext)
   const history=useHistory();
+  const setId=useSetDoc()
   const handleClick=async ()=>{
     await auth.signOut()
   }
@@ -22,6 +23,11 @@ const Show:React.FC = () => {
     setCategorie(e.target.value)
   }
   
+  const handleChangeIndex=()=>{
+    setId("")
+    history.push("/")
+  }
+
   const handleValueChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
     if(!isNaN(Number(e.target.value))){
       setExpense(e.target.value)
@@ -32,7 +38,7 @@ const Show:React.FC = () => {
   }
   const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
-    db.collection("posts").doc(`${doc}`).update({
+    db.collection("posts").doc(docId).update({
       categorie:categorie,
       expense:expense,
     });
@@ -42,22 +48,30 @@ const Show:React.FC = () => {
     setSubmit(true)
   }
   const handleDelete=()=>{
-    db.collection("posts").doc(`${doc}`).delete()
+    db.collection("posts").doc(docId).delete()
   }
   useEffect(()=>{
+    console.log("正常です")
     const unSub=async()=>{
-    const dataRef=db.collection('posts').doc(`${doc}`)
-    const dataDoc=await dataRef.get()
-    if(dataDoc.exists){
-      console.log(dataDoc.data())
+        if(docId){
+          const dataRef=db.collection('posts').doc(docId)
+          const dataDoc=await dataRef.get()
+          if(dataDoc.exists){
+            console.log(dataDoc.data())
+          }else{
+            console.log("データを受け取っていません")
+          }
+        }else{
+          history.push("/")
+        }
     }
-  }
   return ()=>{unSub()}
   },[])
   
   return (
     <>
       <div className="container">
+      <div className="index-button" onClick={handleChangeIndex}>Index</div>
       <div className="logout-button" onClick={handleClick}>logout</div>
         <div className="chart-form">
         <h4>入力フォーム</h4>

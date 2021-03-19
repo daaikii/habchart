@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import {setDoc} from '../context/docIdContext'
+import {useSetDoc} from '../context/idContext'
 
 type PROPS = {
   data: {
@@ -29,7 +29,7 @@ const Index: React.FC<PROPS> = ( {data} ) => {
     }
   }
   const history=useHistory()
-  const setId=setDoc()
+  const setId=useSetDoc()
   const handleClick=(key:DOC)=>{
     setId(key.id)
     history.push("/show")
