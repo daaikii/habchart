@@ -19,7 +19,7 @@ const Feed:React.FC = () => {
   
   
   useEffect(()=>{
-    const docRef=db
+    const unSub=db
     .collection("posts")
     .onSnapshot((snapshot) =>
       setChartData(
@@ -32,17 +32,18 @@ const Feed:React.FC = () => {
       )
     );
     return ()=>{
-      docRef()
+      unSub()
     }
   },[])
   
   return (
     <>
       <Router>
-        <Route exact path="/" render={()=><Index data={chartData}  />} />
+        <Route exact path="/" render={()=><Index arg={chartData}  />} />
         <Switch>
+          <Route exact path="/chart" render={()=><Chart arg={chartData}/>}/>
           <Route exact path="/post" component={Post} />
-          <Route exact path="/show" render={()=><Show/>}/>
+          <Route exact path="/show" component={Show}/>
           <Route exact path="/chart" component={Chart}/>
         </Switch>
       </Router>

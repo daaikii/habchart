@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import {useSetDoc} from '../context/idContext'
 
-type PROPS = {
-  data: {
+export type PROPS = {
+  arg: {
     id:string;
     categorie: string;
     expense: string;
     timestamp: any;
   }[];
 };
+
 type DOC={
     id: string;
     categorie: string;
@@ -17,8 +18,8 @@ type DOC={
     timestamp: any;
 }
 
-const Index: React.FC<PROPS> = ( {data} ) => {
-  const [minValue, setMinValue] = useState("");
+const Index: React.FC<PROPS> = ( {arg} ) => {
+  /*const [minValue, setMinValue] = useState("");
   const [maxValue, setMaxValue] = useState("");
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,17 +28,17 @@ const Index: React.FC<PROPS> = ( {data} ) => {
     } else {
       console.log("");
     }
-  }
+  }*/
   const history=useHistory()
   const setId=useSetDoc()
-  const handleClick=(key:DOC)=>{
-    setId(key.id)
+  const handleClick=(doc:DOC)=>{
+    setId(doc.id)
     history.push("/show")
   }
   
   return (
     <div className="container">
-      <div className="serch-form">
+      {/*<div className="serch-form">
         <form onSubmit={handleSubmit}>
           <label>
             <input
@@ -65,7 +66,7 @@ const Index: React.FC<PROPS> = ( {data} ) => {
             検索
           </button>
         </form>
-      </div>
+      </div>*/}
       <div className="infomation">
         <ul>
           <table>
@@ -75,11 +76,11 @@ const Index: React.FC<PROPS> = ( {data} ) => {
                 <th>カテゴリー</th>
                 <th>金額</th>
               </tr>
-              {data.map((key,index) => (
+              {arg.map((doc,index) => (
                 <tr key={index}>
-                  <td onClick={()=>handleClick(key)} >{new Date(key.timestamp?.toDate()).toLocaleString()}</td>
-                  <td>{key.categorie}</td>
-                  <td>{key.expense}円</td>
+                  <td onClick={()=>handleClick(doc)} >{new Date(doc.timestamp?.toDate()).toLocaleString()}</td>
+                  <td>{doc.categorie}</td>
+                  <td>{doc.expense}円</td>
                 </tr>
               ))}
             </tbody>

@@ -51,19 +51,19 @@ const Show:React.FC = () => {
     db.collection("posts").doc(docId).delete()
   }
   useEffect(()=>{
-    console.log("正常です")
     const unSub=async()=>{
-        if(docId){
-          const dataRef=db.collection('posts').doc(docId)
-          const dataDoc=await dataRef.get()
-          if(dataDoc.exists){
-            console.log(dataDoc.data())
-          }else{
-            console.log("データを受け取っていません")
-          }
+      if(docId){
+        const dataRef=db.collection('posts').doc(docId)
+        const docData=await dataRef.get()
+        if(docData.exists){
+          setCategorie(docData.data()?.categorie)
+          setExpense(docData.data()?.expense)
         }else{
-          history.push("/")
+          console.log("データを受け取っていません")
         }
+      }else{
+        history.push("/")
+      }
     }
   return ()=>{unSub()}
   },[])
