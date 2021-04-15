@@ -49,9 +49,10 @@ const Show:React.FC = () => {
   }
   const handleDelete=()=>{
     db.collection("posts").doc(docId).delete()
+    history.push('/')
   }
   useEffect(()=>{
-    const unSub=async()=>{
+    (async()=>{
       if(docId){
         const dataRef=db.collection('posts').doc(docId)
         const docData=await dataRef.get()
@@ -64,15 +65,14 @@ const Show:React.FC = () => {
       }else{
         history.push("/")
       }
-    }
-  return ()=>{unSub()}
+    })()
   },[])
   
   return (
     <>
       <div className="container">
-      <div className="index-button" onClick={handleChangeIndex}>Index</div>
-      <div className="logout-button" onClick={handleClick}>logout</div>
+      <a className="index-button" onClick={handleChangeIndex}>Index</a>
+      <a className="logout-button" onClick={handleClick}>logout</a>
         <div className="chart-form">
         <h4>入力フォーム</h4>
           <form onSubmit={handleSubmit}>

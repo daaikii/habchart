@@ -12,16 +12,15 @@ const Feed:React.FC = () => {
       id:"",
       categorie:"",
       expense:"",
-      timestamp:null
+      timestamp:""
     }
   ])
   
-  
-  
+
   useEffect(()=>{
-    const unSub=db
-    .collection("posts")
-    .onSnapshot((snapshot) =>
+    db.collection("posts")
+    .orderBy('timestamp','desc')
+    .onSnapshot((snapshot) =>{
       setChartData(
         snapshot.docs.map((doc) => ({
           id:doc.id,
@@ -30,18 +29,16 @@ const Feed:React.FC = () => {
           timestamp:doc.data().timestamp
         }))
       )
-    );
-    return ()=>{
-      unSub()
-    }
+    });
   },[])
+  
   
   return (
     <>
       <Router>
-        <Route exact path="/" render={()=><Index arg={chartData}  />} />
+        <Route exact path="/" render={()=><Index chartdata={chartData}  />} />
         <Switch>
-          <Route exact path="/chart" render={()=><Chart arg={chartData}/>}/>
+          <Route exact path="/chart" render={()=><Chart chartdata={chartData}/>}/>
           <Route exact path="/post" component={Post} />
           <Route exact path="/show" component={Show}/>
           <Route exact path="/chart" component={Chart}/>

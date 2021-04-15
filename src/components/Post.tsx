@@ -4,8 +4,6 @@ import {db,auth} from '../firebase'
 import firebase from 'firebase/app'
 import styles from './Post.module.css'
 
-const categories=["住居費","水道光熱費","通信費","保険料","食費","日用品費","被服費","美容費","趣味費","交通費","教育費","医療費","雑費"]
-
 const CheckboxList:React.FC=()=>{
   const [categorie,setCategorie]=useState("")
   const [expense,setExpense]=useState("")
@@ -13,15 +11,19 @@ const CheckboxList:React.FC=()=>{
   const [isNan,setIsNan]=useState(false)
   const history=useHistory();
   
-  const handleClick=async ()=>{
+  const handleLogout=async ()=>{
     await auth.signOut()
   }
   
-  const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+  const handleChangeIndex=()=>{
+    history.push('/')
+  }
+  
+  const categorieChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
     setCategorie(e.target.value)
   }
   
-  const handleValueChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+  const valueChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
     if(!isNaN(Number(e.target.value))){
       setExpense(e.target.value)
       setIsNan(false)
@@ -31,10 +33,12 @@ const CheckboxList:React.FC=()=>{
   }
   const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
+    const newdate=new Date()
+    const date=newdate.getFullYear()+"/"+(newdate.getMonth()+1)+"/"+newdate.getDate()
     db.collection("posts").add({
       categorie:categorie,
       expense:expense,
-      timestamp:firebase.firestore.FieldValue.serverTimestamp(),
+      timestamp:date,
     });
     history.push("/")
     setCategorie("")
@@ -45,8 +49,9 @@ const CheckboxList:React.FC=()=>{
   return (
     <>
       <div className="container">
-      <div className="logout-button" onClick={handleClick}>logout</div>
-        <h4>入力フォーム</h4>
+      <a className="index-button" onClick={handleChangeIndex}>index</a>
+      <a className="logout-button" onClick={handleLogout}>logout</a>
+      <h4>入力フォーム</h4>
         <div className="chart-form">
           <form onSubmit={handleSubmit}>
             <label>
@@ -55,7 +60,7 @@ const CheckboxList:React.FC=()=>{
                 id="categorie"
                 name="categorie"
                 value={categorie}
-                onChange={handleChange}
+                onChange={categorieChange}
               />
             </label>
             <label>
@@ -64,7 +69,7 @@ const CheckboxList:React.FC=()=>{
                 id="expense"
                 name="expense"
                 value={expense}
-                onChange={handleValueChange}
+                onChange={valueChange}
               />
                 円
             </label>

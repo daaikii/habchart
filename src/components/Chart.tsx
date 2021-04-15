@@ -1,54 +1,64 @@
-import { stringify } from 'node:querystring'
 import React,{useEffect,useState} from 'react'
 import {Bar} from 'react-chartjs-2'
+import {useHistory} from 'react-router-dom'
 import {PROPS} from './Index'
-const Chart:React.FC<PROPS> = ({arg}) => {
-  const [date,setDate] =useState([""])
-  const [sum,setSum] =useState([""])
+const Chart:React.FC<PROPS> = ({chartdata}) => {
+  const [label,setLabels] =useState<string[]>([""])
+  const [sum,setSums] =useState<number[]>([])
+  const history=useHistory()
+  const handleChangeIndex=()=>{
+    history.push('/')
+  }
   useEffect(()=>{
-    const unDo=()=>{
-    arg.map((doc,index)=>{
-      const year=new Date(doc.timestamp.getFullyear().toDate()).toLocaleString()
-      const mon=new Date(doc.timestamp.getMonth().toData()).toLocaleString()
-      const dateLabel=year+mon
-      const dat = String(dateLabel)
-      for(let i=0;i<date.length;i++){
-        switch(date[i]){
-          case dateLabel:
-            const replace=date.slice()
-            replace[i]=dateLabel
-            setDate(replace)
-            const val=sum.slice()
-            const value=val[i]
-            val[i]=value+doc.expense
-            setSum(val)
-            break;
-          case "":
-            setDate([dateLabel])
-            setSum([doc.expense])
-            break
-          default:
-            const newLabel=date.slice()
-            newLabel.push(dateLabel)
-            setDate(newLabel)
-            const newVal=sum.slice()
-            newVal.push(doc.expense)
-            setSum(newVal)
-            break
-        }
+    const sums = new Map();
+    chartdata.forEach(doc => {
+      const sort=doc.timestamp.match( /^(\d+)\/(\d+)\/(\d+)$/)
+      const date=`${sort[1]+'/'+sort[2]}`
+      if(sums.get(date)){
+        const sum=sums.get(date)+Number(doc.expense)
+        sums.set(date ,sum);
+      }else{
+        const add=Number(doc.expense)
+        sums.set(date,add)
       }
     })
-  };return ()=>unDo()
+    
+    setLabels(Array.from(sums.keys()));
+    setSums(Array.from(sums.values()));
   },[])
   const graphData={
-    labels:date,
-    datasets:[{
-      data:sum
-    }]
+    labels:label,
+    datasets:[
+      {
+        data:sum,
+        label:'月別出費額'
+      }
+    ]
+  }
+  const graphOption ={
+    scales:{
+      yAxes:[
+        {
+          scaleLabel:{
+            display :true,
+            labelString:'合計出費額'
+          },
+          ticks:{
+            beginAtZero:true,
+            callback: function (value:string) {
+              return `${value}(円)`;
+            },
+          }
+        }
+      ]
+    }
   }
   return (
-    <div>
-      <Bar data={graphData} />
+    <div className="container">
+      <a className="index-button" onClick={handleChangeIndex}>index</a>
+      <div className="data-graph">
+        <Bar data={graphData} options={graphOption}/>
+      </div>
     </div>
   )
 }
