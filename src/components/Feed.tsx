@@ -5,6 +5,7 @@ import Show from './Show'
 import Chart from './Chart'
 import {db} from '../firebase'
 import {BrowserRouter as Router,Switch,Route} from 'react-router-dom'
+import styled from 'styled-components'
 
 const Feed:React.FC = () => {
   const [chartData,setChartData]=useState([

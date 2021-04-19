@@ -1,8 +1,6 @@
 import React,{useState} from "react";
 import {useHistory} from 'react-router-dom'
 import {db,auth} from '../firebase'
-import firebase from 'firebase/app'
-import styles from './Post.module.css'
 
 const CheckboxList:React.FC=()=>{
   const [categorie,setCategorie]=useState("")
