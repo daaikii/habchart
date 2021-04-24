@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import UserProvider from "./context/userContext"
+import UserProvider from "./context/userContext";
 import reportWebVitals from "./reportWebVitals";
 import DocIdProvider from "./context/idContext";
 

@@ -1,52 +1,63 @@
-import React,{useEffect,useState} from 'react'
-import Index from './Index'
-import Post from "./Post"
-import Show from './Show'
-import Chart from './Chart'
-import {db} from '../firebase'
-import {BrowserRouter as Router,Switch,Route} from 'react-router-dom'
-import styled from 'styled-components'
+import React, { useEffect, useState } from "react";
+import Header from "./Header";
+import Index from "./Index";
+import Show from "./Show";
+import Chart from "./Chart";
+import Home from "./Home";
+import { db } from "../firebase";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import styled from "styled-components";
 
-const Feed:React.FC = () => {
-  const [chartData,setChartData]=useState([
+const Feed: React.FC = () => {
+  const [chartData, setChartData] = useState([
     {
-      id:"",
-      categorie:"",
-      expense:"",
-      timestamp:""
-    }
-  ])
-  
+      id: "",
+      categorie: "",
+      expense: "",
+      timestamp: "",
+    },
+  ]);
 
-  useEffect(()=>{
+  useEffect(() => {
     db.collection("posts")
-    .orderBy('timestamp','desc')
-    .onSnapshot((snapshot) =>{
-      setChartData(
-        snapshot.docs.map((doc) => ({
-          id:doc.id,
-          categorie:doc.data().categorie,
-          expense:doc.data().expense,
-          timestamp:doc.data().timestamp
-        }))
-      )
-    });
-  },[])
-  
-  
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) => {
+        snapshot.docs.sort(function (a, b) {
+          if (a.data().timestamp < b.data().timestamp) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        setChartData(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            categorie: doc.data().categorie,
+            expense: doc.data().expense,
+            timestamp: doc.data().timestamp,
+          }))
+        );
+      });
+  }, []);
+
   return (
     <>
       <Router>
-        <Route exact path="/" render={()=><Index chartdata={chartData}  />} />
+        <Header />
+        <Route exact path="/" render={() => <Index chartdata={chartData} />} />
         <Switch>
-          <Route exact path="/chart" render={()=><Chart chartdata={chartData}/>}/>
-          <Route exact path="/post" component={Post} />
-          <Route exact path="/show" component={Show}/>
-          <Route exact path="/chart" component={Chart}/>
+          <Route exact path="/home " component={Home} />
+          <Route
+            exact
+            path="/chart"
+            render={() => <Chart chartdata={chartData} />}
+          />
+          <Route exact path="/show" component={Show} />
+          <Route exact path="/chart" component={Chart} />
         </Switch>
       </Router>
     </>
-  )
-}
+  );
+};
 
-export default Feed
+export default Feed;

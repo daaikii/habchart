@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Auth.module.css";
-import {useUpdateUserProfile} from '../context/userContext'
+import { useUpdateUserProfile } from "../context/userContext";
 import { auth, provider, storage } from "../firebase";
 import {
   Avatar,
@@ -82,7 +82,7 @@ const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const updateUserProfile=useUpdateUserProfile()
+  const updateUserProfile = useUpdateUserProfile();
 
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
@@ -123,10 +123,10 @@ const Auth: React.FC = () => {
       displayName: username,
       photoURL: url,
     });
-      updateUserProfile({
-        displayName: username,
-        photoUrl: url,
-      })
+    updateUserProfile({
+      displayName: username,
+      photoUrl: url,
+    });
   };
   const signInGoogle = async () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
@@ -229,28 +229,31 @@ const Auth: React.FC = () => {
               onClick={
                 isLogin
                   ? async () => {
-                    try {
-                      await signInEmail();
-                    } catch (err) {
-                      alert(err.message);
+                      try {
+                        await signInEmail();
+                      } catch (err) {
+                        alert(err.message);
+                      }
                     }
-                  }
                   : async () => {
-                    try {
-                      await signUpEmail();
-                    } catch (err) {
-                      alert(err.message);
+                      try {
+                        await signUpEmail();
+                      } catch (err) {
+                        alert(err.message);
+                      }
                     }
-                  }
               }
             >
               {isLogin ? "Login" : "Register"}
             </Button>
             <Grid container>
               <Grid item xs>
-                <span className={styles.login_reset}
+                <span
+                  className={styles.login_reset}
                   onClick={() => setOpenModal(true)}
-                >Forgot password?</span>
+                >
+                  Forgot password?
+                </span>
               </Grid>
               <Grid item>
                 <span
