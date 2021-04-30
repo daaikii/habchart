@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { auth, db } from "../firebase";
-import { useSetDoc, DocContext } from "../context/idContext";
-
-type SETDOC = {
-  doc: string;
-};
+import { db } from "../firebase";
+import { DocContext } from "../context/idContext";
 
 const Show: React.FC = () => {
   const [categorie, setCategorie] = useState("");
@@ -14,9 +10,6 @@ const Show: React.FC = () => {
   const [isNan, setIsNan] = useState(false);
   const docId = useContext(DocContext);
   const history = useHistory();
-  const handleClick = async () => {
-    await auth.signOut();
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategorie(e.target.value);

@@ -3,6 +3,7 @@ import "./App.module.css";
 import Home from "./components/Home";
 import Auth from "./components/Auth";
 import Feed from "./components/Feed";
+import Header from "./components/Header";
 import { auth } from "./firebase";
 import { useLogin, useLogout, AuthContext } from "./context/userContext";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -29,10 +30,13 @@ const App: React.FC = () => {
         {user.uid ? (
           <Feed />
         ) : (
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/auth" component={Auth} />
-          </Switch>
+          <>
+            <Header />
+            <Switch>
+              <Route exact path="/auth" component={Auth} />
+              <Route path="/" component={Home} />
+            </Switch>
+          </>
         )}
       </Router>
     </>

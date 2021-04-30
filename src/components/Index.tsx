@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSetDoc } from "../context/idContext";
 import { db } from "../firebase";
-import { makeStyles, Grid, Paper } from "@material-ui/core";
-import styles from "./Index.module.css";
-import image from "../assets/img/image.jpg";
+import { makeStyles, Grid } from "@material-ui/core";
 
 export type PROPS = {
   chartdata: {
@@ -27,30 +25,39 @@ const useStyled = makeStyles(() => ({
     display: "flex",
     width: "100%",
     height: "100vh",
-    backgroundImage: `url(${image})`,
+    backgroundColor: "#ffffff",
     backgroundBlendMode: " lighten",
   },
-  content: {
-    justifyContent: "center",
-    width: "1000px",
+  main: {
+    alignItems: "center",
     height: "auto",
     margin: "0 auto",
     backgroundColor: "#FFFFFF",
+    marginTop: "10px",
+  },
+  table: {
+    margin: "0 auto ",
+  },
+  tableitem: {
+    fontFamily: "ＭＳ ゴシック",
   },
   sideform: {
+    marginTop: "10px",
     textAlign: "center",
     width: "100%",
     height: "250px",
-    border: "medium solid white",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "rgba(255,255,255,0.8)",
   },
   formlist: {
     padding: 0,
     listStyle: "none",
+    "& input:focus": {
+      borderColor: "#C0D85C",
+      boxShadow: "2px 2px 5px 0px rgba(0,0,0,0.2)",
+    },
   },
   formbutton: {
-    display: "block",
-    width: "100%",
+    width: "10rem",
   },
 }));
 
@@ -98,20 +105,15 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
   };
 
   return (
-    <Grid
-      container
-      component="main"
-      className={classes.container}
-      justify="center"
-    >
+    <Grid container component="main" className={classes.container}>
       <Grid item xs={12} sm={12} md={10}>
-        <div className={classes.content}>
-          <table className="data-table">
+        <div className={classes.main}>
+          <table className={classes.table}>
             <thead>
               <tr>
-                <th>日付</th>
-                <th>カテゴリー</th>
-                <th>金額</th>
+                <th className={classes.tableitem}>日付</th>
+                <th className={classes.tableitem}>カテゴリー</th>
+                <th className={classes.tableitem}>金額</th>
               </tr>
             </thead>
             {chartdata.map((doc, index) => (
@@ -126,18 +128,9 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
           </table>
         </div>
       </Grid>
-      <Grid
-        item
-        xs={false}
-        sm={false}
-        md={2}
-        component={Paper}
-        elevation={6}
-        square
-        className={classes.sideform}
-      >
+      <Grid item xs={false} sm={false} md={2} className={classes.sideform}>
         <form onSubmit={handleSubmit}>
-          <h2>簡易入力フォーム</h2>
+          <h2>入力フォーム</h2>
           <div className={classes.formlist}>
             <div>
               <label>カテゴリー</label>

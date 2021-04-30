@@ -5,8 +5,8 @@ import { useHistory } from "react-router-dom";
 import { useSetDoc } from "../context/idContext";
 import {
   AppBar,
+  Avatar,
   Toolbar,
-  IconButton,
   Button,
   Typography,
   makeStyles,
@@ -15,48 +15,71 @@ import DehazeIcon from "@material-ui/icons/Dehaze";
 import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 
 const useStyled = makeStyles((theme) => ({
-  headerwrapper: {
-    width: "100%",
-    height: "100px",
-    padding: "0",
-    display: "flex",
-    justifyContent: "space-between",
+  headerWrapper: {
     backgroundColor: " rgba(250, 250, 250)",
-    boxShadow: "1px 2px 4px -1px rgba(0,0,0,0.3)",
+    boxShadow: "1px 2px 4px -1px rgba(0,0,0,0.2)",
+    position: "relative",
   },
   icon: {
-    cursor: "pointer",
-    margin: "20px",
+    margin: "5px",
+  },
+  iconIrust: {
+    fontSize: "2rem",
   },
   menuButton: {
     position: "absolute",
     right: 10,
   },
   menuList: {
+    padding: "0 0.6em",
+    textAlign: "center",
+    listStyle: "none",
     position: "absolute",
-    width: 300,
-    height: 500,
-    right: 10,
-    top: 70,
+    width: "10em",
+    right: "0.7em",
+    top: "3.1em",
     backgroundColor: "white",
-    boxShadow: "4px 0px 4px 4px rgba(0,0,0,0.3)",
-    borderRadius: 10,
+    boxShadow: "0px 0px 2px 2px rgba(0,0,0,0.1)",
+    borderRadius: "3px",
+  },
+  menuUser: {
+    cursor: "pointer",
+    margin: "0.5rem ",
+    "& div": {
+      margin: "0 auto",
+    },
+    "& p": {
+      margin: "0",
+    },
+  },
+  menuItems: {
+    cursor: "pointer",
+    marginTop: -1,
+    padding: "0.2em",
+    borderTop: "1px dashed rgba(0,0,0,0.1)",
   },
 }));
-const Header = () => {
+const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const user = useContext(AuthContext);
   const classes = useStyled();
   const menuRef: any = useRef();
   const history = useHistory();
   const setId = useSetDoc();
-  const user = useContext(AuthContext);
 
   const handleLogout = async () => {
     await auth.signOut();
   };
+  const handleLogin = () => {
+    history.push("/auth");
+  };
+
   const handleChangeIndex = () => {
     setId("");
     history.push("/");
+  };
+  const handleChangeChart = () => {
+    history.push("/chart");
   };
 
   useEffect(() => {
@@ -65,36 +88,46 @@ const Header = () => {
   return (
     <>
       <AppBar position="static">
-        <Toolbar className={classes.headerwrapper}>
+        <Toolbar className={classes.headerWrapper}>
           <Button onClick={handleChangeIndex} className={classes.icon}>
             <Typography variant="h4">Hab</Typography>
-            <LocalAtmIcon />
+            <LocalAtmIcon className={classes.iconIrust} />
           </Button>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="default"
-            aria-label="menu"
-            onClick={() => setIsOpen(isOpen ? false : true)}
-          >
-            <DehazeIcon fontSize="large" />
-          </IconButton>
+          {user.uid ? (
+            <Button
+              className={classes.menuButton}
+              color="default"
+              aria-label="menu"
+              onClick={() => setIsOpen(isOpen ? false : true)}
+            >
+              <DehazeIcon fontSize="large" />
+            </Button>
+          ) : (
+            <Button className={classes.menuButton} onClick={handleLogin}>
+              <h3>Login</h3>
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       {isOpen && (
         <ul
           className={classes.menuList}
-          onBlur={() => setTimeout(() => setIsOpen(false), 100)}
+          onBlur={() => setIsOpen(false)}
           ref={menuRef}
           tabIndex={1}
         >
-          <li>ユーザー設定</li>
-          <li>支出</li>
-          {user.uid ? (
-            <li onClick={handleLogout}>ログアウト</li>
-          ) : (
-            <li onClick={handleLogout}>ログイン</li>
-          )}
+          <li className={classes.menuUser}>
+            <div>
+              <Avatar src={user.photoURL}></Avatar>
+            </div>
+            <p>{user.displayName}</p>
+          </li>
+          <li className={classes.menuItems} onClick={handleChangeChart}>
+            支出
+          </li>
+          <li className={classes.menuItems} onClick={handleLogout}>
+            ログアウト
+          </li>
         </ul>
       )}
     </>

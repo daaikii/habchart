@@ -3,10 +3,9 @@ import Header from "./Header";
 import Index from "./Index";
 import Show from "./Show";
 import Chart from "./Chart";
-import Home from "./Home";
+
 import { db } from "../firebase";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import styled from "styled-components";
 
 const Feed: React.FC = () => {
   const [chartData, setChartData] = useState([
@@ -44,16 +43,10 @@ const Feed: React.FC = () => {
     <>
       <Router>
         <Header />
-        <Route exact path="/" render={() => <Index chartdata={chartData} />} />
         <Switch>
-          <Route exact path="/home " component={Home} />
-          <Route
-            exact
-            path="/chart"
-            render={() => <Chart chartdata={chartData} />}
-          />
-          <Route exact path="/show" component={Show} />
-          <Route exact path="/chart" component={Chart} />
+          <Route path="/chart" render={() => <Chart chartdata={chartData} />} />
+          <Route path="/show" component={Show} />
+          <Route path="/" render={() => <Index chartdata={chartData} />} />
         </Switch>
       </Router>
     </>
