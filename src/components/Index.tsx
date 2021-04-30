@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useSetDoc } from "../context/idContext";
 import { db } from "../firebase";
-import { makeStyles, Grid } from "@material-ui/core";
+import { makeStyles, Grid, Modal } from "@material-ui/core";
 
 export type PROPS = {
   chartdata: {
@@ -20,7 +19,18 @@ type DOC = {
   timestamp: any;
 };
 
-const useStyled = makeStyles(() => ({
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
+const useStyled = makeStyles((theme) => ({
   container: {
     display: "flex",
     width: "100%",
@@ -59,19 +69,45 @@ const useStyled = makeStyles(() => ({
   formbutton: {
     width: "10rem",
   },
+  modal: {
+    outline: "none",
+    position: "absolute",
+    width: 400,
+    borderRadius: 10,
+    backgroundColor: "white",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(10),
+  },
 }));
 
 const Index: React.FC<PROPS> = ({ chartdata }) => {
   const history = useHistory();
-  const setId = useSetDoc();
+  const [docId, setDocId] = useState("");
   const [categorie, setCategorie] = useState("");
+  const [showCategorie, setShowCategorie] = useState("");
   const [expense, setExpense] = useState("");
+  const [showExpense, setShowExpense] = useState("");
   const [isNan, setIsNan] = useState(false);
   const classes = useStyled();
+  const [openModal, setOpenModal] = useState(false);
 
   const handleClick = (doc: DOC) => {
-    setId(doc.id);
-    history.push("/show");
+    (async () => {
+      setOpenModal(true);
+      setDocId(doc.id);
+      if (docId) {
+        const dataRef = db.collection("posts").doc(docId);
+        const docData = await dataRef.get();
+        if (docData.exists) {
+          setShowCategorie(docData.data()?.categorie);
+          setShowExpense(docData.data()?.expense);
+        } else {
+          console.log("データを受け取っていません");
+        }
+      } else {
+        history.push("/");
+      }
+    })();
   };
 
   const categorieChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,6 +138,34 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
     });
     setCategorie("");
     setExpense("");
+  };
+
+  const handleCategorieChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCategorie(e.target.value);
+  };
+
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isNaN(Number(e.target.value))) {
+      setExpense(e.target.value);
+      setIsNan(false);
+    } else {
+      setIsNan(true);
+    }
+  };
+  const showSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    db.collection("posts").doc(docId).update({
+      categorie: showCategorie,
+      expense: showExpense,
+    });
+    history.push("/");
+    setShowCategorie("");
+    setShowExpense("");
+  };
+
+  const handleDelete = () => {
+    db.collection("posts").doc(docId).delete();
+    history.push("/");
   };
 
   return (
@@ -166,6 +230,43 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
           </span>
         </form>
       </Grid>
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <div style={getModalStyle()} className={classes.modal}>
+          <div className="chart-form">
+            <h4>編集フォーム</h4>
+            <form onSubmit={showSubmit}>
+              <label>
+                <input
+                  type="text"
+                  id="categorie"
+                  name="categorie"
+                  value={showCategorie}
+                  onChange={handleCategorieChange}
+                />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  id="expense"
+                  name="expense"
+                  value={showExpense}
+                  onChange={handleValueChange}
+                />
+                円
+              </label>
+              <button type="submit" disabled={!categorie || !expense}>
+                変更
+              </button>
+            </form>
+            <span style={{ display: isNan ? "inline" : "none" }}>
+              ＊数値を入力してください
+            </span>
+          </div>
+          <div className="delete-button" onClick={handleDelete}>
+            削除
+          </div>
+        </div>
+      </Modal>
     </Grid>
   );
 };

@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import { AuthContext } from "../context/userContext";
 import { auth } from "../firebase";
 import { useHistory } from "react-router-dom";
-import { useSetDoc } from "../context/idContext";
 import {
   AppBar,
   Avatar,
@@ -65,7 +64,6 @@ const Header: React.FC = () => {
   const classes = useStyled();
   const menuRef: any = useRef();
   const history = useHistory();
-  const setId = useSetDoc();
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -75,7 +73,6 @@ const Header: React.FC = () => {
   };
 
   const handleChangeIndex = () => {
-    setId("");
     history.push("/");
   };
   const handleChangeChart = () => {
@@ -123,7 +120,7 @@ const Header: React.FC = () => {
             <p>{user.displayName}</p>
           </li>
           <li className={classes.menuItems} onClick={handleChangeChart}>
-            支出
+            月別グラフ
           </li>
           <li className={classes.menuItems} onClick={handleLogout}>
             ログアウト

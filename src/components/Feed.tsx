@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Index from "./Index";
-import Show from "./Show";
 import Chart from "./Chart";
 
 import { db } from "../firebase";
@@ -45,7 +44,6 @@ const Feed: React.FC = () => {
         <Header />
         <Switch>
           <Route path="/chart" render={() => <Chart chartdata={chartData} />} />
-          <Route path="/show" component={Show} />
           <Route path="/" render={() => <Index chartdata={chartData} />} />
         </Switch>
       </Router>
