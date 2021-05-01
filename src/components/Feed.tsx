@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Index from "./Index";
 import Chart from "./Chart";
-
+import User from "./User";
 import { db } from "../firebase";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
@@ -18,7 +18,7 @@ const Feed: React.FC = () => {
 
   useEffect(() => {
     db.collection("posts")
-      .orderBy("timestamp", "desc")
+      .orderBy("timestamp")
       .onSnapshot((snapshot) => {
         snapshot.docs.sort(function (a, b) {
           if (a.data().timestamp < b.data().timestamp) {
@@ -43,6 +43,7 @@ const Feed: React.FC = () => {
       <Router>
         <Header />
         <Switch>
+          <Route path="/user" component={User} />
           <Route path="/chart" render={() => <Chart chartdata={chartData} />} />
           <Route path="/" render={() => <Index chartdata={chartData} />} />
         </Switch>

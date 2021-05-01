@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Post from "../components/Post";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import { makeStyles, Grid, Modal } from "@material-ui/core";
@@ -20,8 +21,8 @@ type DOC = {
 };
 
 function getModalStyle() {
-  const top = 50;
-  const left = 50;
+  const top = 30;
+  const left = 40;
 
   return {
     top: `${top}%`,
@@ -51,24 +52,6 @@ const useStyled = makeStyles((theme) => ({
   tableitem: {
     fontFamily: "ＭＳ ゴシック",
   },
-  sideform: {
-    marginTop: "10px",
-    textAlign: "center",
-    width: "100%",
-    height: "250px",
-    backgroundColor: "rgba(255,255,255,0.8)",
-  },
-  formlist: {
-    padding: 0,
-    listStyle: "none",
-    "& input:focus": {
-      borderColor: "#C0D85C",
-      boxShadow: "2px 2px 5px 0px rgba(0,0,0,0.2)",
-    },
-  },
-  formbutton: {
-    width: "10rem",
-  },
   modal: {
     outline: "none",
     position: "absolute",
@@ -83,9 +66,7 @@ const useStyled = makeStyles((theme) => ({
 const Index: React.FC<PROPS> = ({ chartdata }) => {
   const history = useHistory();
   const [docId, setDocId] = useState("");
-  const [categorie, setCategorie] = useState("");
   const [showCategorie, setShowCategorie] = useState("");
-  const [expense, setExpense] = useState("");
   const [showExpense, setShowExpense] = useState("");
   const [isNan, setIsNan] = useState(false);
   const classes = useStyled();
@@ -95,58 +76,24 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
     (async () => {
       setOpenModal(true);
       setDocId(doc.id);
-      if (docId) {
-        const dataRef = db.collection("posts").doc(docId);
-        const docData = await dataRef.get();
-        if (docData.exists) {
-          setShowCategorie(docData.data()?.categorie);
-          setShowExpense(docData.data()?.expense);
-        } else {
-          console.log("データを受け取っていません");
-        }
+      const dataRef = db.collection("posts").doc(doc.id);
+      const docData = await dataRef.get();
+      if (docData.exists) {
+        setShowCategorie(docData.data()?.categorie);
+        setShowExpense(docData.data()?.expense);
       } else {
-        history.push("/");
+        console.log("データを受け取っていません");
       }
     })();
   };
 
-  const categorieChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCategorie(e.target.value);
-  };
-
-  const valueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isNaN(Number(e.target.value))) {
-      setExpense(e.target.value);
-      setIsNan(false);
-    } else {
-      setIsNan(true);
-    }
-  };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newdate = new Date();
-    const timestamp =
-      newdate.getFullYear() +
-      "/" +
-      (newdate.getMonth() + 1) +
-      "/" +
-      newdate.getDate();
-    db.collection("posts").add({
-      categorie: categorie,
-      expense: expense,
-      timestamp: timestamp,
-    });
-    setCategorie("");
-    setExpense("");
-  };
-
   const handleCategorieChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCategorie(e.target.value);
+    setShowCategorie(e.target.value);
   };
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isNaN(Number(e.target.value))) {
-      setExpense(e.target.value);
+      setShowExpense(e.target.value);
       setIsNan(false);
     } else {
       setIsNan(true);
@@ -158,9 +105,9 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
       categorie: showCategorie,
       expense: showExpense,
     });
-    history.push("/");
     setShowCategorie("");
     setShowExpense("");
+    setOpenModal(false);
   };
 
   const handleDelete = () => {
@@ -172,7 +119,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
     <Grid container component="main" className={classes.container}>
       <Grid item xs={12} sm={12} md={10}>
         <div className={classes.main}>
-          <table className={classes.table}>
+          <table className={classes.table} key="">
             <thead>
               <tr>
                 <th className={classes.tableitem}>日付</th>
@@ -181,8 +128,8 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
               </tr>
             </thead>
             {chartdata.map((doc, index) => (
-              <tbody>
-                <tr key={index}>
+              <tbody  key={index}>
+                <tr>
                   <td onClick={() => handleClick(doc)}>{doc.timestamp}</td>
                   <td>{doc.categorie}</td>
                   <td>{doc.expense}円</td>
@@ -192,44 +139,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
           </table>
         </div>
       </Grid>
-      <Grid item xs={false} sm={false} md={2} className={classes.sideform}>
-        <form onSubmit={handleSubmit}>
-          <h2>入力フォーム</h2>
-          <div className={classes.formlist}>
-            <div>
-              <label>カテゴリー</label>
-            </div>
-            <input
-              type="text"
-              id="categorie"
-              name="categorie"
-              value={categorie}
-              onChange={categorieChange}
-            />
-            <div>
-              <label>金額</label>
-            </div>
-            <input
-              type="text"
-              id="expense"
-              name="expense"
-              value={expense}
-              onChange={valueChange}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={!categorie || !expense}
-            className={classes.formbutton}
-          >
-            保存
-          </button>
-          <span style={{ display: isNan ? "inline" : "none" }}>
-            ＊数値を入力してください
-          </span>
-        </form>
-      </Grid>
+      <Post />
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <div style={getModalStyle()} className={classes.modal}>
           <div className="chart-form">
@@ -254,7 +164,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
                 />
                 円
               </label>
-              <button type="submit" disabled={!categorie || !expense}>
+              <button type="submit" disabled={!showCategorie || !showExpense}>
                 変更
               </button>
             </form>

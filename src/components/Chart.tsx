@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyled = makeStyles(() => ({
   container: {
-    height: "100vh",
+    height: "90vh",
   },
 }));
 
@@ -15,10 +15,6 @@ const Chart: React.FC<PROPS> = ({ chartdata }) => {
   const [sum, setSums] = useState<number[]>([]);
   const history = useHistory();
   const classes = useStyled();
-
-  const handleChangeIndex = () => {
-    history.push("/");
-  };
 
   useEffect(() => {
     const sums = new Map();
@@ -44,6 +40,7 @@ const Chart: React.FC<PROPS> = ({ chartdata }) => {
     labels: label,
     datasets: [
       {
+        backgroundColor: "#1e90ff",
         data: sum,
         label: "月別出費額",
       },

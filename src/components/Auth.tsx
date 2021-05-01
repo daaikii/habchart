@@ -90,7 +90,7 @@ const Auth: React.FC = () => {
       e.target.value = "";
     }
   };
-  const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
+  const sendResetEmail = async () => {
     await auth
       .sendPasswordResetEmail(resetEmail)
       .then(() => {

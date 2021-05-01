@@ -75,10 +75,12 @@ const Header: React.FC = () => {
   const handleChangeIndex = () => {
     history.push("/");
   };
-  const handleChangeChart = () => {
+  const changeChart = () => {
     history.push("/chart");
   };
-
+  const changeUser = () => {
+    history.push("/user");
+  };
   useEffect(() => {
     isOpen && menuRef.current.focus();
   }, [isOpen]);
@@ -113,13 +115,13 @@ const Header: React.FC = () => {
           ref={menuRef}
           tabIndex={1}
         >
-          <li className={classes.menuUser}>
+          <div className={classes.menuUser} onClick={changeUser}>
             <div>
               <Avatar src={user.photoURL}></Avatar>
             </div>
             <p>{user.displayName}</p>
-          </li>
-          <li className={classes.menuItems} onClick={handleChangeChart}>
+          </div>
+          <li className={classes.menuItems} onClick={changeChart}>
             月別グラフ
           </li>
           <li className={classes.menuItems} onClick={handleLogout}>
