@@ -15,6 +15,7 @@ import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 
 const useStyled = makeStyles((theme) => ({
   headerWrapper: {
+    height:"10vh",
     backgroundColor: " rgba(250, 250, 250)",
     boxShadow: "1px 2px 4px -1px rgba(0,0,0,0.2)",
     position: "relative",

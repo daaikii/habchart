@@ -4,23 +4,17 @@ import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 const useStyled = makeStyles((theme) => ({
   container: {
     display: "flex",
+    height:"100vh",
     width: "100%",
-    height: "100vh",
     alignItems:"center"
-  },
-  title:{
-    position:"absolute",
-    margin: "10em",
- 
   },
   homeIrust: {
     display: "flex",
-    padding: 0,
     alignItems: "center",
     boxShadow: "inset 4px 0px 4px 4px rgba(0,0,0,0.3)",
   },
-  irustText: {
-    fontSize: "7em",
+  irustText:{
+    fontSize:"7em"
   },
   irustIcon: {
     fontSize: "5em",
@@ -28,6 +22,24 @@ const useStyled = makeStyles((theme) => ({
   main: {
     fontSize: "2em",
   },
+  [theme.breakpoints.down("sm")]:{
+    title:{
+      marginLeft: theme.spacing(4),
+      height: "80vh",
+    },
+  },
+  [theme.breakpoints.up("md")]:{
+    title:{
+      marginLeft: theme.spacing(15),
+      height: "80vh",
+    },
+  },
+  [theme.breakpoints.up("lg")]:{
+    title:{
+      marginLeft: theme.spacing(20),
+      height: "60vh",
+    },
+  }
 }));
 const Home: React.FC = () => {
   const classes = useStyled();
@@ -51,3 +63,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+

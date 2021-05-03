@@ -33,35 +33,71 @@ function getModalStyle() {
 
 const useStyled = makeStyles((theme) => ({
   container: {
-    display: "flex",
     width: "100%",
     height: "100vh",
     backgroundColor: "#ffffff",
-    backgroundBlendMode: " lighten",
+    backgroundBlendMode:"lighten",
+  },
+  content:{
+    margin:"0 auto",
+    display:"flex",
   },
   main: {
-    alignItems: "center",
-    height: "auto",
-    margin: "0 auto",
+    alignItems:"center",
     backgroundColor: "#FFFFFF",
-    marginTop: "10px",
+    fontFamily: "Open Sans, sans-serif",
+    lineHeight: 1.25,
   },
-  table: {
-    margin: "0 auto ",
+  table :{
+    borderCollapse:"collapse",
+    margin: "0 auto",
+    padding: 0,
+    width: "650px",
+    boxShadow: "0 0 15px -6px #00000073",
+    "& tr": {
+      backgroundColor: "#fff",
+    },
+    "& tbody tr:hover":{
+      backgroundColor: "#fffae9",
+    },
+    "& th,td": {
+      padding: ".35em 1em",
+      borderBottom:  "1px solid #eee",
+    },
+    "& thead":{
+      "& th" :{
+        fontSize: ".85em",
+        padding:" 1em",
+      },
+      "& tr":{
+        backgroundColor:"#1e90ff",
+        color:"#fff",
+      }
+    } ,
+    "& tbody th": {
+      textAlign:" left",
+      fontSize: ".8em",
+    },
   },
-  tableitem: {
-    fontFamily: "ＭＳ ゴシック",
-  },
-  modal: {
-    outline: "none",
-    position: "absolute",
-    width: 400,
-    borderRadius: 10,
-    backgroundColor: "white",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(10),
-  },
-}));
+  txt:{
+    textAlign:"center",
+    fontSize: ".75em",
+ },
+ price:{
+   textAlign: "right",
+   color: "#000",
+   fontWeight: "bold",
+ },
+    modal: {
+      outline: "none",
+      position: "absolute",
+      width: 400,
+      borderRadius: 10,
+      backgroundColor: "white",
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(10),
+    },
+  }));
 
 const Index: React.FC<PROPS> = ({ chartdata }) => {
   const history = useHistory();
@@ -116,30 +152,30 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
   };
 
   return (
-    <Grid container component="main" className={classes.container}>
-      <Grid item xs={12} sm={12} md={10}>
+    <div  className={classes.container}>
+      <div className={classes.content}>
         <div className={classes.main}>
           <table className={classes.table} key="">
             <thead>
               <tr>
-                <th className={classes.tableitem}>日付</th>
-                <th className={classes.tableitem}>カテゴリー</th>
-                <th className={classes.tableitem}>金額</th>
+                <th ></th>
+                <th >カテゴリー</th>
+                <th >金額</th>
               </tr>
             </thead>
             {chartdata.map((doc, index) => (
               <tbody  key={index}>
                 <tr>
                   <td onClick={() => handleClick(doc)}>{doc.timestamp}</td>
-                  <td>{doc.categorie}</td>
-                  <td>{doc.expense}円</td>
+                  <td className={classes.txt}>{doc.categorie}</td>
+                  <td className={classes.price}>{doc.expense}円</td>
                 </tr>
               </tbody>
             ))}
           </table>
         </div>
-      </Grid>
-      <Post />
+        <Post />    
+      </div>
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <div style={getModalStyle()} className={classes.modal}>
           <div className="chart-form">
@@ -177,7 +213,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
           </div>
         </div>
       </Modal>
-    </Grid>
+    </div>
   );
 };
 

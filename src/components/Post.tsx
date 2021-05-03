@@ -4,17 +4,13 @@ import { makeStyles, Grid } from "@material-ui/core";
 
 const useStyled = makeStyles((theme) => ({
   sideform: {
-    marginTop: "10px",
     textAlign: "center",
-    width: "100%",
-    height: "250px",
     backgroundColor: "rgba(255,255,255,0.8)",
   },
   formlist: {
-    padding: 0,
     listStyle: "none",
     "& input:focus": {
-      borderColor: "#C0D85C",
+      backgroundColor: "#C0D85C",
       boxShadow: "2px 2px 5px 0px rgba(0,0,0,0.2)",
     },
   },
@@ -60,7 +56,7 @@ const Post: React.FC = () => {
   };
 
   return (
-    <Grid item xs={false} sm={false} md={2} className={classes.sideform}>
+    <div className={classes.sideform}>
       <form onSubmit={handleSubmit}>
         <h2>入力フォーム</h2>
         <div className={classes.formlist}>
@@ -97,7 +93,7 @@ const Post: React.FC = () => {
           ＊数値を入力してください
         </span>
       </form>
-    </Grid>
+    </div>
   );
 };
 
