@@ -79,6 +79,9 @@ const Header: React.FC = () => {
   const changeChart = () => {
     history.push("/chart");
   };
+  const changeGraph=()=>{
+    history.push("/doughnut")
+  }
   const changeUser = () => {
     history.push("/user");
   };
@@ -124,6 +127,9 @@ const Header: React.FC = () => {
           </div>
           <li className={classes.menuItems} onClick={changeChart}>
             月別グラフ
+          </li>
+          <li className={classes.menuItems} onClick={changeGraph}>
+            今月の消費割合
           </li>
           <li className={classes.menuItems} onClick={handleLogout}>
             ログアウト

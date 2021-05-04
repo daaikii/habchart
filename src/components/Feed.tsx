@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Index from "./Index";
 import Chart from "./Chart";
+import Pergraph from "./Pergraph"
 import User from "./User";
 import { db } from "../firebase";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -18,15 +19,8 @@ const Feed: React.FC = () => {
 
   useEffect(() => {
     db.collection("posts")
-      .orderBy("timestamp")
+      .orderBy("timestamp","desc")
       .onSnapshot((snapshot) => {
-        snapshot.docs.sort(function (a, b) {
-          if (a.data().timestamp < b.data().timestamp) {
-            return -1;
-          } else {
-            return 1;
-          }
-        });
         setChartData(
           snapshot.docs.map((doc) => ({
             id: doc.id,
@@ -45,6 +39,7 @@ const Feed: React.FC = () => {
         <Switch>
           <Route path="/user" component={User} />
           <Route path="/chart" render={() => <Chart chartdata={chartData} />} />
+          <Route path="/doughnut" render={()=><Pergraph chartdata={chartData}/>} />
           <Route path="/" render={() => <Index chartdata={chartData} />} />
         </Switch>
       </Router>

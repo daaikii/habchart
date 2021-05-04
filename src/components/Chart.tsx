@@ -3,22 +3,24 @@ import { Bar } from "react-chartjs-2";
 import { useHistory } from "react-router-dom";
 import { PROPS } from "./Index";
 import { makeStyles } from "@material-ui/core";
+import { reverse } from "node:dns";
 
 const useStyled = makeStyles(() => ({
   container: {
-    height: "90vh",
+    height:"100vh",
   },
 }));
 
 const Chart: React.FC<PROPS> = ({ chartdata }) => {
-  const [label, setLabels] = useState<string[]>([""]);
-  const [sum, setSums] = useState<number[]>([]);
+  const [label, setLabels] = useState<string[]>([]);
+  const [sum, setSum] = useState<number[]>([]);
   const history = useHistory();
   const classes = useStyled();
 
   useEffect(() => {
     const sums = new Map();
-    chartdata.forEach((doc) => {
+    console.log(chartdata)
+      chartdata.forEach((doc) => {
       const sort = doc.timestamp.match(/(\d+)\/(\d+)\/(\d+)$/);
       if (sort) {
         const date = `${sort[1] + "/" + sort[2]}`;
@@ -33,8 +35,12 @@ const Chart: React.FC<PROPS> = ({ chartdata }) => {
         history.push("/");
       }
     });
-    setLabels(Array.from(sums.keys()));
-    setSums(Array.from(sums.values()));
+    const arrkey=Array.from(sums.keys())
+    arrkey.reverse()
+    setLabels(arrkey);
+    const arrval=Array.from(sums.values())
+    arrval.reverse()
+    setSum(arrval);
   }, []);
   const graphData = {
     labels: label,

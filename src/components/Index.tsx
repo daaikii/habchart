@@ -107,7 +107,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
   const [isNan, setIsNan] = useState(false);
   const classes = useStyled();
   const [openModal, setOpenModal] = useState(false);
-
+  
   const handleClick = (doc: DOC) => {
     (async () => {
       setOpenModal(true);
@@ -148,7 +148,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
 
   const handleDelete = () => {
     db.collection("posts").doc(docId).delete();
-    history.push("/");
+    setOpenModal(false)
   };
 
   return (
@@ -174,7 +174,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
             ))}
           </table>
         </div>
-        <Post />    
+        <Post />
       </div>
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <div style={getModalStyle()} className={classes.modal}>
