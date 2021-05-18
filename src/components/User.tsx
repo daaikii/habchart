@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./User.module.css";
+import "../sass/style.scss"
 import {
   Grid,
   Paper,
@@ -10,7 +10,6 @@ import {
   Modal,
   Button,
   IconButton,
-  makeStyles,
 } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import EmailIcon from "@material-ui/icons/Email";
@@ -19,57 +18,12 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { auth, storage } from "../firebase";
 import firebase from "firebase/app";
 import { useHistory } from "react-router-dom";
-import { useUpdateUserProfile } from "../context/userContext";
-
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: "5em auto",
-  },
-  modal: {
-    outline: "none",
-    position: "absolute",
-    width: 400,
-    borderRadius: 10,
-    backgroundColor: "white",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(10),
-  },
-
-  paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%",
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
 
 const User: React.FC = () => {
-  const classes = useStyles();
   const [username, setUsername] = useState("");
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [resetEmail, setResetEmail] = useState("");
   const [openModal, setOpenModal] = useState(false);
-  const updateUserProfile = useUpdateUserProfile();
   const user = firebase.auth().currentUser;
   const history = useHistory();
 
@@ -130,11 +84,12 @@ const User: React.FC = () => {
       sm={8}
       md={5}
       component={Paper}
-      elevation={6}
-      className={classes.root}
+      elevation={2}
+      square
+      className="freearound"
     >
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
+      <div className="login">
+        <Avatar className="login-avatar">
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
@@ -164,12 +119,12 @@ const User: React.FC = () => {
                     fontSize="large"
                     className={
                       avatarImage
-                        ? styles.login_addIconLoaded
-                        : styles.login_addIcon
+                        ? "login-loadIcon"
+                        : "login-nomalIcon"
                     }
                   />
                   <input
-                    className={styles.login_hiddenIcon}
+                    className="login-filebtn"
                     type="file"
                     onChange={onChangeImageHandler}
                   />
@@ -185,7 +140,7 @@ const User: React.FC = () => {
           fullWidth
           variant="contained"
           color="primary"
-          className={classes.submit}
+          className="login-button"
           startIcon={<EmailIcon />}
           onClick={handleUpdate}
         >
@@ -195,14 +150,14 @@ const User: React.FC = () => {
           fullWidth
           variant="contained"
           color="primary"
-          className={classes.submit}
+          className="login-button"
           onClick={deleteAcount}
         >
           Delete
         </Button>
         <Modal open={openModal} onClose={() => setOpenModal(false)}>
-          <div style={getModalStyle()} className={classes.modal}>
-            <div className={styles.login_modal}>
+          <div className="modal">
+            <div className="center">
               <TextField
                 InputLabelProps={{
                   shrink: true,

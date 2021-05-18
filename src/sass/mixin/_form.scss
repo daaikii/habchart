@@ -1,0 +1,32 @@
+@mixin form{
+  &-button{
+    width:100%;
+    margin:1.5em 0em 1em !important
+  }
+  &-avatar{
+    margin:0.5em;
+    @include _bgcol(danger)
+  };
+  &-loadIcon{
+    @include _col(load);
+    cursor: pointer;
+  }
+  &-nomalIcon{
+    @include _col(unload);
+    cursor: pointer;
+  }
+  &-filebtn{
+    @include filebtn
+  }
+  &-form{
+    margin-top:0.5em;
+  };
+  &-reset{
+    cursor:pointer;
+    text-align: start
+  }
+  &-mode{
+    @include _col(mode);
+    cursor:pointer;
+  }
+}

@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useHistory } from "react-router-dom";
-import { PROPS } from "./Index";
-import { makeStyles } from "@material-ui/core";
-import { reverse } from "node:dns";
+import {Grid} from "@material-ui/core";
+import "../sass/style.scss"
 
-const useStyled = makeStyles(() => ({
-  container: {
-    height:"100vh",
-  },
-}));
+export type PROPS = {
+  chartdata: {
+    id: string;
+    categorie: string;
+    expense: string;
+    timestamp: any;
+  }[];
+};
 
 const Chart: React.FC<PROPS> = ({ chartdata }) => {
   const [label, setLabels] = useState<string[]>([]);
   const [sum, setSum] = useState<number[]>([]);
   const history = useHistory();
-  const classes = useStyled();
 
   useEffect(() => {
     const sums = new Map();
@@ -71,11 +72,11 @@ const Chart: React.FC<PROPS> = ({ chartdata }) => {
     },
   };
   return (
-    <div className={classes.container}>
-      <div className="data-graph">
-        <Bar data={graphData} options={graphOption} />
-      </div>
-    </div>
+    <Grid container justify="center" className="container">
+      <Grid item xs={12} sm={10} lg={10} className="freearound">
+        <Bar data={graphData} options={graphOption}  />
+      </Grid>
+    </Grid>
   );
 };
 

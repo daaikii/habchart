@@ -1,0 +1,113 @@
+import React,{useState,useEffect} from 'react'
+import ShowInput from "./ShowInput"
+import {useHistory} from "react-router-dom"
+import {db} from "../firebase"
+
+export type SHOW={
+  showid:string
+  setid:React.Dispatch<React.SetStateAction<string>>
+  chartdata:{
+      id: string;
+      expenses:{categorie:string,expense:string}[];
+      categorie:string;
+      expense: string;
+      timestamp:string;
+  }[],
+}
+
+const Show:React.FC<SHOW> = ({showid,setid,chartdata}) => {
+  const history=useHistory()
+  const [addresses, setAddresses] = React.useState(["address.0"])
+  const [update,setUpdate]=useState<boolean>(false);
+  const [expenses,setExpenses]=useState([{
+      categorie:"",
+      expense:""
+  }])
+
+  const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+      let sum=0
+      let cat=""
+      expenses.map((doc)=>{
+        sum=sum+Number(doc.expense)
+        if(cat==""){
+          cat=doc.categorie
+        }else{
+          cat=cat+"/"+doc.categorie
+        }
+      })
+    db.collection("posts").doc(showid).update({
+      expenses,
+      expense:sum,
+      categorie:cat,
+    });
+    setExpenses([{
+      categorie:"",
+      expense:""
+    }])
+    setid("")
+    history.push("/")
+  }
+
+  const handleDelete=()=>{
+    db.collection("posts").doc(showid).delete()
+    history.push("/")
+  }
+
+  const addAddress=() =>{
+    const newAddresses = [...addresses];
+    newAddresses.push(`address.${(addresses.length)}`);
+    setAddresses(newAddresses);
+    const  cpex=[...expenses]
+    cpex.push({categorie:"",expense:""})
+    setExpenses(cpex)
+  };
+  
+  const removeAddress= () =>{
+    addresses.pop();
+    expenses.pop();
+    setUpdate(update?false:true)
+  }
+
+  useEffect(()=>{
+    if(showid){
+      chartdata.map((doc)=>{
+        if(Object.is(doc.id,showid)){
+          setExpenses(doc.expenses)
+          doc.expenses.forEach((expense:any,index:number)=>{
+            const address=`address.${index}`
+            addresses.splice(index,1,address)
+            setAddresses(addresses)
+          })
+        }
+      })
+    }else{
+      history.push("/")
+    }
+  },[])
+
+  return (
+    <div className="container">
+      <div className="xform">
+        <form onSubmit={handleSubmit} >
+          <h4>入力フォーム</h4>
+          <div>
+            <label>カテゴリー</label>
+            <label>金額</label>
+          </div>
+          {addresses.map((expense:any, index) => {
+            return(
+              <div key={index}>
+                <ShowInput index={index}　expenses={expenses} setEx={setExpenses} showid={showid} />
+              </div>
+            )
+          })}
+        </form>
+        <button onClick={handleDelete}>delete</button>
+        <a onClick={addAddress}>+</a>
+        <a onClick={removeAddress}>-</a>
+      </div>
+    </div>
+  )
+}
+export default Show

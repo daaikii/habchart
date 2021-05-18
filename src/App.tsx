@@ -1,5 +1,4 @@
 import React, { useEffect, useContext } from "react";
-import "./App.module.css";
 import Home from "./components/Home";
 import Auth from "./components/Auth";
 import Feed from "./components/Feed";

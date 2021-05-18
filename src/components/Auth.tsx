@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./Auth.module.css";
+import "../sass/style.scss"
 import { useUpdateUserProfile } from "../context/userContext";
 import { auth, provider, storage } from "../firebase";
 import {
@@ -10,7 +10,6 @@ import {
   Paper,
   Grid,
   Typography,
-  makeStyles,
   Modal,
   IconButton,
   Box,
@@ -21,60 +20,7 @@ import EmailIcon from "@material-ui/icons/Email";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: "100vh",
-  },
-  modal: {
-    outline: "none",
-    position: "absolute",
-    width: 400,
-    borderRadius: 10,
-    backgroundColor: "white",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(10),
-  },
-  image: {
-    backgroundImage: "url(https://source.unsplash.com/random)",
-    backgroundRepeat: "no-repeat",
-    backgroundColor:
-      theme.palette.type === "light"
-        ? theme.palette.grey[50]
-        : theme.palette.grey[900],
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-  paper: {
-    margin: theme.spacing(8, 4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%",
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
-
 const Auth: React.FC = () => {
-  const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -133,17 +79,18 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid container className="container">
       <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+      <Grid item xs={false} sm={4} md={7} className="bgimg" />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
+        <div className="login">
+          <Avatar className="login-avatar">
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             {isLogin ? "Login" : "Register"}
           </Typography>
+          
           <form>
             {!isLogin && (
               <>
@@ -169,12 +116,12 @@ const Auth: React.FC = () => {
                         fontSize="large"
                         className={
                           avatarImage
-                            ? styles.login_addIconLoaded
-                            : styles.login_addIcon
+                            ? "login-loadIcon"
+                            : "login-nomalIcon"
                         }
                       />
                       <input
-                        className={styles.login_hiddenIcon}
+                        className="login-filebtn"
                         type="file"
                         onChange={onChangeImageHandler}
                       />
@@ -184,7 +131,8 @@ const Auth: React.FC = () => {
               </>
             )}
           </form>
-          <form className={classes.form} noValidate>
+
+          <form className="login-form" noValidate>
             <TextField
               variant="outlined"
               margin="normal"
@@ -224,7 +172,7 @@ const Auth: React.FC = () => {
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
+              className="login-button"
               startIcon={<EmailIcon />}
               onClick={
                 isLogin
@@ -247,9 +195,8 @@ const Auth: React.FC = () => {
               {isLogin ? "Login" : "Register"}
             </Button>
             <Grid container>
-              <Grid item xs>
+              <Grid item xs className="login-reset">
                 <span
-                  className={styles.login_reset}
                   onClick={() => setOpenModal(true)}
                 >
                   Forgot password?
@@ -257,7 +204,7 @@ const Auth: React.FC = () => {
               </Grid>
               <Grid item>
                 <span
-                  className={styles.login_toggleMode}
+                  className="login-mode"
                   onClick={() => setIsLogin(!isLogin)}
                 >
                   {isLogin ? "Create new account" : "Back to Login"}
@@ -268,15 +215,15 @@ const Auth: React.FC = () => {
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
+              className="login-button"
               onClick={signInGoogle}
             >
               Sign with Google
             </Button>
           </form>
           <Modal open={openModal} onClose={() => setOpenModal(false)}>
-            <div style={getModalStyle()} className={classes.modal}>
-              <div className={styles.login_modal}>
+            <div className="modal">
+              <div className="center">
                 <TextField
                   InputLabelProps={{
                     shrink: true,

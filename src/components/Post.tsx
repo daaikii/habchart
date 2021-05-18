@@ -1,29 +1,10 @@
 import React, { useState } from "react";
 import { db } from "../firebase";
-import { makeStyles, Grid } from "@material-ui/core";
-
-const useStyled = makeStyles((theme) => ({
-  sideform: {
-    textAlign: "center",
-    backgroundColor: "rgba(255,255,255,0.8)",
-  },
-  formlist: {
-    listStyle: "none",
-    "& input:focus": {
-      backgroundColor: "#C0D85C",
-      boxShadow: "2px 2px 5px 0px rgba(0,0,0,0.2)",
-    },
-  },
-  formbutton: {
-    width: "10rem",
-  },
-}));
 
 const Post: React.FC = () => {
   const [categorie, setCategorie] = useState("");
   const [expense, setExpense] = useState("");
   const [isNan, setIsNan] = useState(false);
-  const classes = useStyled();
 
   const categorieChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategorie(e.target.value);
@@ -37,6 +18,7 @@ const Post: React.FC = () => {
       setIsNan(true);
     }
   };
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newdate = new Date();
@@ -56,10 +38,10 @@ const Post: React.FC = () => {
   };
 
   return (
-    <div className={classes.sideform}>
+    <div className="yform">
       <form onSubmit={handleSubmit}>
-        <h2>入力フォーム</h2>
-        <div className={classes.formlist}>
+        <h4>入力フォーム</h4>
+        <div className="yform-list">
           <div>
             <label>カテゴリー</label>
           </div>
@@ -69,6 +51,7 @@ const Post: React.FC = () => {
             name="categorie"
             value={categorie}
             onChange={categorieChange}
+            className="yform-input"
           />
           <div>
             <label>金額</label>
@@ -79,13 +62,14 @@ const Post: React.FC = () => {
             name="expense"
             value={expense}
             onChange={valueChange}
+            className="yform-input"
           />
         </div>
 
         <button
           type="submit"
           disabled={!categorie || !expense}
-          className={classes.formbutton}
+          className="yform-button"
         >
           保存
         </button>

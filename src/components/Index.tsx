@@ -1,124 +1,56 @@
 import React, { useState } from "react";
+import "../sass/style.scss"
 import Post from "../components/Post";
-import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
-import { makeStyles, Grid, Modal } from "@material-ui/core";
+import { Modal,Grid,Hidden } from "@material-ui/core";
+import Pergraph from "./Pergraph";
+import { useHistory } from "react-router";
 
-export type PROPS = {
+export type INDEXPROPS={
   chartdata: {
     id: string;
+    expenses:{categorie:string,expense:string}[];
     categorie: string;
     expense: string;
     timestamp: any;
   }[];
-};
+  sum:string[]
+  categorie:string[]
+  setshowid:React.Dispatch<React.SetStateAction<string>>
+}
 
 type DOC = {
   id: string;
+  expenses:{categorie:string,expense:string}[]
   categorie: string;
   expense: string;
   timestamp: any;
 };
 
-function getModalStyle() {
-  const top = 30;
-  const left = 40;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
-const useStyled = makeStyles((theme) => ({
-  container: {
-    width: "100%",
-    height: "100vh",
-    backgroundColor: "#ffffff",
-    backgroundBlendMode:"lighten",
-  },
-  content:{
-    margin:"0 auto",
-    display:"flex",
-  },
-  main: {
-    alignItems:"center",
-    backgroundColor: "#FFFFFF",
-    fontFamily: "Open Sans, sans-serif",
-    lineHeight: 1.25,
-  },
-  table :{
-    borderCollapse:"collapse",
-    margin: "0 auto",
-    padding: 0,
-    width: "650px",
-    boxShadow: "0 0 15px -6px #00000073",
-    "& tr": {
-      backgroundColor: "#fff",
-    },
-    "& tbody tr:hover":{
-      backgroundColor: "#fffae9",
-    },
-    "& th,td": {
-      padding: ".35em 1em",
-      borderBottom:  "1px solid #eee",
-    },
-    "& thead":{
-      "& th" :{
-        fontSize: ".85em",
-        padding:" 1em",
-      },
-      "& tr":{
-        backgroundColor:"#1e90ff",
-        color:"#fff",
-      }
-    } ,
-    "& tbody th": {
-      textAlign:" left",
-      fontSize: ".8em",
-    },
-  },
-  txt:{
-    textAlign:"center",
-    fontSize: ".75em",
- },
- price:{
-   textAlign: "right",
-   color: "#000",
-   fontWeight: "bold",
- },
-    modal: {
-      outline: "none",
-      position: "absolute",
-      width: 400,
-      borderRadius: 10,
-      backgroundColor: "white",
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(10),
-    },
-  }));
-
-const Index: React.FC<PROPS> = ({ chartdata }) => {
-  const history = useHistory();
+const Index: React.FC<INDEXPROPS> = (props) => {
   const [docId, setDocId] = useState("");
   const [showCategorie, setShowCategorie] = useState("");
   const [showExpense, setShowExpense] = useState("");
   const [isNan, setIsNan] = useState(false);
-  const classes = useStyled();
   const [openModal, setOpenModal] = useState(false);
+  const history=useHistory()
   
   const handleClick = (doc: DOC) => {
     (async () => {
-      setOpenModal(true);
-      setDocId(doc.id);
-      const dataRef = db.collection("posts").doc(doc.id);
-      const docData = await dataRef.get();
-      if (docData.exists) {
-        setShowCategorie(docData.data()?.categorie);
-        setShowExpense(docData.data()?.expense);
-      } else {
-        console.log("データを受け取っていません");
+      if(doc.expenses){
+        props.setshowid(doc.id)
+        history.push("/show")
+      }else{
+        setDocId(doc.id);
+        const docRef = db.collection("posts").doc(doc.id);
+        const docData = await docRef.get();
+        if (docData.exists) {
+          setShowCategorie(docData.data()?.categorie);
+          setShowExpense(docData.data()?.expense);
+          setOpenModal(true);
+        } else {
+          console.log("データを受け取っていません");
+        }
       }
     })();
   };
@@ -135,6 +67,7 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
       setIsNan(true);
     }
   };
+
   const showSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     db.collection("posts").doc(docId).update({
@@ -152,32 +85,38 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
   };
 
   return (
-    <div  className={classes.container}>
-      <div className={classes.content}>
-        <div className={classes.main}>
-          <table className={classes.table} key="">
-            <thead>
+    <Grid container justify="center" className="container">
+      <Grid item xs={12} sm={12} lg={6} >
+        <table className="table">
+          <thead>
+            <tr>
+              <th ></th>
+              <th >カテゴリー</th>
+              <th >金額</th>
+            </tr>
+          </thead>
+          {props.chartdata.map((doc, index) => (
+            <tbody  key={index}>
               <tr>
-                <th ></th>
-                <th >カテゴリー</th>
-                <th >金額</th>
+                <td onClick={() => handleClick(doc)}>{doc.timestamp}</td>
+                <td className="table-text">{doc.categorie}</td>
+                <td className="table-price">{doc.expense}円</td>
               </tr>
-            </thead>
-            {chartdata.map((doc, index) => (
-              <tbody  key={index}>
-                <tr>
-                  <td onClick={() => handleClick(doc)}>{doc.timestamp}</td>
-                  <td className={classes.txt}>{doc.categorie}</td>
-                  <td className={classes.price}>{doc.expense}円</td>
-                </tr>
-              </tbody>
-            ))}
-          </table>
-        </div>
-        <Post />
-      </div>
+            </tbody>
+          ))}
+        </table>
+      </Grid>
+
+      <Hidden smDown>
+        <Grid item lg={2} ><Post /></Grid>
+      </Hidden>
+
+      <Grid item xs={12} sm={5} lg={5}>
+        <Pergraph chartdata={props.chartdata} sum={props.sum} categorie={props.categorie} />
+      </Grid>
+
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <div style={getModalStyle()} className={classes.modal}>
+        <div className="modal">
           <div className="chart-form">
             <h4>編集フォーム</h4>
             <form onSubmit={showSubmit}>
@@ -213,7 +152,8 @@ const Index: React.FC<PROPS> = ({ chartdata }) => {
           </div>
         </div>
       </Modal>
-    </div>
+
+    </Grid>
   );
 };
 

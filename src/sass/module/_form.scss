@@ -1,0 +1,12 @@
+.yform{
+  @include form;
+  display:flex;
+  flex-direction:column;
+  text-align:center;
+  align-items: center;
+  margin:1em 1em ;
+}
+.xform{
+  @include form;
+  text-align: center;
+}

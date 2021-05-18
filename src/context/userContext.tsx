@@ -19,7 +19,7 @@ export const AuthContext = createContext<USER>({
 });
 
 export const AuthOpeContext = createContext<Opetype>({
-  login: (_) => console.error("Providerを指定してください"),
+  login: () => console.error("Providerを指定してください"),
   logout: () => console.error("Providerを指定してください"),
   updateUserProfile: () => console.error("Providerを指定してください"),
 });
@@ -51,6 +51,7 @@ const UserProvider: React.FC = ({ children }) => {
       photoURL: authUser.photoURL,
       displayName: authUser.displayName,
     });
+
   return (
     <AuthOpeContext.Provider value={{ login, logout, updateUserProfile }}>
       <AuthContext.Provider value={user}>{children}</AuthContext.Provider>
@@ -60,7 +61,6 @@ const UserProvider: React.FC = ({ children }) => {
 
 export const useLogin = () => useContext(AuthOpeContext).login;
 export const useLogout = () => useContext(AuthOpeContext).logout;
-export const useUpdateUserProfile = () =>
-  useContext(AuthOpeContext).updateUserProfile;
+export const useUpdateUserProfile = () => useContext(AuthOpeContext).updateUserProfile;
 
 export default UserProvider;
