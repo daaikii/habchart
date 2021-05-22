@@ -48,8 +48,6 @@ const ShowInput:React.FC<PROPS> = ({index,expenses,setEx,showid}) => {
         if(docData.exists){
           setCategorie(docData.data()?.expenses[index]?.categorie)
           setExpense(docData.data()?.expenses[index]?.expense)
-        }else{
-
         }
       })()
     }
@@ -57,7 +55,7 @@ const ShowInput:React.FC<PROPS> = ({index,expenses,setEx,showid}) => {
 
   return (
     <>
-      <div className="">
+      <div className="xform-input">
         <input
           type="text"
           id="categorie"
@@ -79,7 +77,7 @@ const ShowInput:React.FC<PROPS> = ({index,expenses,setEx,showid}) => {
           ＊数値を入力してください
       </span>
       {expenses.length==index+1&&
-        <button disabled={isNan||!categorie||!expense}>
+        <button className="xform-button" disabled={isNan||!categorie||!expense}>
           保存
         </button>
       }

@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react'
 import ShowInput from "./ShowInput"
 import {useHistory} from "react-router-dom"
 import {db} from "../firebase"
+import {Grid} from "@material-ui/core"
 
 export type SHOW={
   showid:string
@@ -87,11 +88,11 @@ const Show:React.FC<SHOW> = ({showid,setid,chartdata}) => {
   },[])
 
   return (
-    <div className="container">
+    <Grid container className="container">
       <div className="xform">
         <form onSubmit={handleSubmit} >
-          <h4>入力フォーム</h4>
-          <div>
+          <h4 className="xform-title">入力フォーム</h4>
+          <div className="xform-input">
             <label>カテゴリー</label>
             <label>金額</label>
           </div>
@@ -103,11 +104,15 @@ const Show:React.FC<SHOW> = ({showid,setid,chartdata}) => {
             )
           })}
         </form>
-        <button onClick={handleDelete}>delete</button>
-        <a onClick={addAddress}>+</a>
-        <a onClick={removeAddress}>-</a>
+        {expenses.slice(-1)[0].categorie&&expenses.slice(-1)[0].expense&&
+          <div>
+            <a className="xform-button" onClick={addAddress}>+</a>
+            <a onClick={removeAddress}>-</a>
+          </div>
+        }
+        <button className="xform-button" onClick={handleDelete}>delete</button>
       </div>
-    </div>
+    </Grid>
   )
 }
 export default Show

@@ -1,13 +1,16 @@
-import React,{useEffect, useState} from 'react'
+import React,{ useState,useContext} from 'react'
 import Input from "./Input"
 import {useHistory} from "react-router-dom"
 import {db} from "../firebase"
+import{Grid} from "@material-ui/core"
+import {AuthContext} from "../context/userContext"
 
 const Posts:React.FC = () => {
   const history=useHistory()
   const [addresses, setAddresses] = React.useState(["address.0"]);
   const [update,setUpdate]=useState<boolean>(false)
   const [valid,setValid]=useState<boolean>(true)
+  const user=useContext(AuthContext)
   const [expenses,setExpenses]=useState([{
       categorie:"",
       expense:""
@@ -51,7 +54,8 @@ const Posts:React.FC = () => {
       expenses,
       expense:sum,
       categorie:cat,
-      timestamp:timestamp
+      timestamp:timestamp,
+      uid:user.uid
     });
     setExpenses([{
       categorie:"",
@@ -61,11 +65,11 @@ const Posts:React.FC = () => {
   }
 
   return (
-    <div className="container">
+    <Grid container className="container">
       <div className="xform">
         <form onSubmit={handleSubmit} >
-          <h4>入力フォーム</h4>
-          <div>
+          <h4 className="xform-title">入力フォーム</h4>
+          <div className="xform-input">
             <label>カテゴリー</label>
             <label>金額</label>
           </div>
@@ -77,10 +81,14 @@ const Posts:React.FC = () => {
             )
           })}
         </form>
-        <a onClick={addAddress}>+</a>
-        <a onClick={removeAddress}>-</a>
+        {expenses.slice(-1)[0].categorie&&expenses.slice(-1)[0].expense&&
+          <div>
+            <a className="" onClick={addAddress}>+</a>
+            <a onClick={removeAddress}>-</a>
+          </div>
+        }
       </div>
-    </div>
+    </Grid>
   )
 }
 

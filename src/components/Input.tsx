@@ -46,7 +46,7 @@ const Input:React.FC<PROPS> = ({index,expenses,setEx}) => {
 
   return (
     <>
-      <div className="">
+      <div className="xform-input">
         <input
           type="text"
           id="categorie"
@@ -68,7 +68,7 @@ const Input:React.FC<PROPS> = ({index,expenses,setEx}) => {
           ＊数値を入力してください
       </span>
       {expenses.length==index+1&&
-        <button disabled={isNan||!categorie||!expense}>
+        <button className="xform-button" disabled={isNan||!categorie||!expense}>
           保存
         </button>
       }

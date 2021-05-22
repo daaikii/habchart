@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+
+import React, { useState,useContext } from "react";
 import { db } from "../firebase";
+import { AuthContext } from "../context/userContext";
 
 const Post: React.FC = () => {
   const [categorie, setCategorie] = useState("");
   const [expense, setExpense] = useState("");
   const [isNan, setIsNan] = useState(false);
+  const user=useContext(AuthContext)
 
   const categorieChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategorie(e.target.value);
@@ -32,6 +35,7 @@ const Post: React.FC = () => {
       categorie: categorie,
       expense: expense,
       timestamp: timestamp,
+      uid:user.uid
     });
     setCategorie("");
     setExpense("");
