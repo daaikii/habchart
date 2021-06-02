@@ -1,17 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { DataContext } from "../context/dataContext";
 
-type GRAPHROPS = {
-  sum: string[];
-  categorie: string[];
-};
-
-const Pergraph: React.FC<GRAPHROPS> = (props) => {
+const Pergraph: React.FC = () => {
+  const categorie = useContext(DataContext).categorie;
+  const sum = useContext(DataContext).sum;
   const graphData = {
     datasets: [
       {
-        data: props.sum,
+        data: sum,
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(54, 162, 235, 0.2)",
@@ -31,7 +28,7 @@ const Pergraph: React.FC<GRAPHROPS> = (props) => {
         borderWidth: 1,
       },
     ],
-    labels: props.categorie,
+    labels: categorie,
   };
   const option = {
     plugin: {

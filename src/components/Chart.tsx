@@ -4,7 +4,7 @@ import { Grid } from "@material-ui/core";
 import { DataContext } from "../context/dataContext";
 
 const Chart: React.FC = () => {
-  const data = useContext(DataContext);
+  const data = useContext(DataContext).data;
   const [label, setLabels] = useState<string[]>([]);
   const [sum, setSum] = useState<number[]>([]);
 

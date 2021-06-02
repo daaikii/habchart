@@ -4,13 +4,7 @@ import { db } from "../firebase";
 import { Modal, Grid, Hidden } from "@material-ui/core";
 import Pergraph from "./Pergraph";
 import { useHistory } from "react-router";
-import { DataContext } from "../context/dataContext";
-
-export type INDEXPROPS = {
-  sum: string[];
-  categorie: string[];
-  setshowid: React.Dispatch<React.SetStateAction<string>>;
-};
+import { DataContext, useSetShowId } from "../context/dataContext";
 
 type DOC = {
   id: string;
@@ -20,8 +14,9 @@ type DOC = {
   timestamp: any;
 };
 
-const Index: React.FC<INDEXPROPS> = (props) => {
-  const data = useContext(DataContext);
+const Index: React.FC = () => {
+  const data = useContext(DataContext).data;
+  const setshowid = useSetShowId();
   const [docId, setDocId] = useState("");
   const [showCategorie, setShowCategorie] = useState("");
   const [showExpense, setShowExpense] = useState("");
@@ -32,7 +27,7 @@ const Index: React.FC<INDEXPROPS> = (props) => {
   const handleClick = (doc: DOC) => {
     (async () => {
       if (doc.expenses) {
-        props.setshowid(doc.id);
+        setshowid(doc.id);
         history.push("/show");
       } else {
         setDocId(doc.id);
@@ -108,7 +103,7 @@ const Index: React.FC<INDEXPROPS> = (props) => {
       </Hidden>
 
       <Grid item xs={12} sm={5} lg={5}>
-        <Pergraph sum={props.sum} categorie={props.categorie} />
+        <Pergraph />
       </Grid>
 
       <Modal open={openModal} onClose={() => setOpenModal(false)}>

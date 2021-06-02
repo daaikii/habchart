@@ -3,14 +3,12 @@ import ShowInput from "./ShowInput";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import { Grid } from "@material-ui/core";
-import { DataContext } from "../context/dataContext";
+import { DataContext, useSetShowId } from "../context/dataContext";
 
-export type SHOW = {
-  showid: string;
-  setid: React.Dispatch<React.SetStateAction<string>>;
-};
-const Show: React.FC<SHOW> = ({ showid, setid }) => {
-  const data = useContext(DataContext);
+const Show: React.FC = () => {
+  const data = useContext(DataContext).data;
+  const showid = useContext(DataContext).showid;
+  const setshowid = useSetShowId();
   const history = useHistory();
   const [addresses, setAddresses] = React.useState(["address.0"]);
   const [update, setUpdate] = useState<boolean>(false);
@@ -44,7 +42,7 @@ const Show: React.FC<SHOW> = ({ showid, setid }) => {
         expense: "",
       },
     ]);
-    setid("");
+    setshowid("");
     history.push("/");
   };
 
