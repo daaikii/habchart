@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../sass/style.scss"
 import { useUpdateUserProfile } from "../context/userContext";
 import { auth, provider, storage } from "../firebase";
 import {

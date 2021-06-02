@@ -1,46 +1,40 @@
-import React, { useState } from "react";
-import "../sass/style.scss"
+import React, { useState, useContext } from "react";
 import Post from "../components/Post";
 import { db } from "../firebase";
-import { Modal,Grid,Hidden } from "@material-ui/core";
+import { Modal, Grid, Hidden } from "@material-ui/core";
 import Pergraph from "./Pergraph";
 import { useHistory } from "react-router";
+import { DataContext } from "../context/dataContext";
 
-export type INDEXPROPS={
-  chartdata: {
-    id: string;
-    expenses:{categorie:string,expense:string}[];
-    categorie: string;
-    expense: string;
-    timestamp: any;
-  }[];
-  sum:string[]
-  categorie:string[]
-  setshowid:React.Dispatch<React.SetStateAction<string>>
-}
+export type INDEXPROPS = {
+  sum: string[];
+  categorie: string[];
+  setshowid: React.Dispatch<React.SetStateAction<string>>;
+};
 
 type DOC = {
   id: string;
-  expenses:{categorie:string,expense:string}[]
+  expenses: { categorie: string; expense: string }[];
   categorie: string;
   expense: string;
   timestamp: any;
 };
 
 const Index: React.FC<INDEXPROPS> = (props) => {
+  const data = useContext(DataContext);
   const [docId, setDocId] = useState("");
   const [showCategorie, setShowCategorie] = useState("");
   const [showExpense, setShowExpense] = useState("");
   const [isNan, setIsNan] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const history=useHistory()
-  
+  const history = useHistory();
+
   const handleClick = (doc: DOC) => {
     (async () => {
-      if(doc.expenses){
-        props.setshowid(doc.id)
-        history.push("/show")
-      }else{
+      if (doc.expenses) {
+        props.setshowid(doc.id);
+        history.push("/show");
+      } else {
         setDocId(doc.id);
         const docRef = db.collection("posts").doc(doc.id);
         const docData = await docRef.get();
@@ -81,22 +75,22 @@ const Index: React.FC<INDEXPROPS> = (props) => {
 
   const handleDelete = () => {
     db.collection("posts").doc(docId).delete();
-    setOpenModal(false)
+    setOpenModal(false);
   };
 
   return (
     <Grid container justify="center" className="container">
-      <Grid item xs={12} sm={12} lg={6} >
+      <Grid item xs={12} sm={12} lg={6}>
         <table className="table">
           <thead>
             <tr>
-              <th ></th>
-              <th >カテゴリー</th>
-              <th >金額</th>
+              <th></th>
+              <th>カテゴリー</th>
+              <th>金額</th>
             </tr>
           </thead>
-          {props.chartdata.map((doc, index) => (
-            <tbody  key={index}>
+          {data.map((doc, index) => (
+            <tbody key={index}>
               <tr>
                 <td onClick={() => handleClick(doc)}>{doc.timestamp}</td>
                 <td className="table-text">{doc.categorie}</td>
@@ -108,11 +102,13 @@ const Index: React.FC<INDEXPROPS> = (props) => {
       </Grid>
 
       <Hidden smDown>
-        <Grid item lg={2} ><Post /></Grid>
+        <Grid item lg={2}>
+          <Post />
+        </Grid>
       </Hidden>
 
       <Grid item xs={12} sm={5} lg={5}>
-        <Pergraph chartdata={props.chartdata} sum={props.sum} categorie={props.categorie} />
+        <Pergraph sum={props.sum} categorie={props.categorie} />
       </Grid>
 
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
@@ -152,7 +148,6 @@ const Index: React.FC<INDEXPROPS> = (props) => {
           </div>
         </div>
       </Modal>
-
     </Grid>
   );
 };

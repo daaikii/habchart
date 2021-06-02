@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import "../sass/style.scss"
 import { AuthContext } from "../context/userContext";
 import { auth } from "../firebase";
 import { useHistory } from "react-router-dom";

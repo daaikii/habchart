@@ -1,103 +1,109 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Header from "./Header";
 import Index from "./Index";
 import Chart from "./Chart";
 import User from "./User";
-import Posts from "./Posts"
-import Show from "./Show"
+import Posts from "./Posts";
+import Show from "./Show";
 import { db } from "../firebase";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthContext } from "../context/userContext";
+import { useSetData } from "../context/dataContext";
 
 const Feed: React.FC = () => {
-  const [categorie,setCategorie]=useState<string[]>([])
-  const [sum,setSum]=useState<string[]>([])
-  const [showId,setShowId] = useState("")
-  const user=useContext(AuthContext)
-  const [chartData, setChartData] = useState([
-    {
-      id: "",
-      expenses:[{categorie:"",expense:""}],
-      categorie: "",
-      expense: "",
-      timestamp: "",
-      uid:user.uid
-    },
-  ]);
-  
+  const user = useContext(AuthContext);
+  const setData = useSetData();
+  const [categorie, setCategorie] = useState<string[]>([]);
+  const [sum, setSum] = useState<string[]>([]);
+  const [showId, setShowId] = useState("");
+
   useEffect(() => {
-    console.log(user)
+    console.log(user);
     db.collection("posts")
-    .orderBy("timestamp","desc")
-    .onSnapshot((snapshot) => {
-      const chartdata=[{
-        id:"",
-        expenses:[{categorie:"",expense:""}],
-        categorie:"",
-        expense:"",
-        timestamp:"",
-        uid:""
-      }]
-      snapshot.docs.map((doc)=>{
-        if(doc.data().uid===user.uid){
-          chartdata.push({
-            id: doc.id,
-            expenses:doc.data()?.expenses,
-            categorie: doc.data().categorie,
-            expense: doc.data().expense,
-            timestamp: doc.data().timestamp,
-            uid:user.uid
-          })
-        }}
-        )
-        chartdata.shift()
-        setChartData(chartdata)
-        const sums=new Map()
-        snapshot.forEach((doc)=>{
-          if(doc.data().uid===user.uid){
-          const sort=doc.data().timestamp.match(/(\d+)\/(\d+)\/(\d+)$/)
-          const cat=doc.data().categorie
-          const date=new Date
-          const thisMonth=date.getFullYear()+"/"+(date.getMonth()+1)
-          if(thisMonth==`${sort[1]+"/"+sort[2]}`){     //今日の日付 
-            if(doc.data().expenses){                   //複数の分岐
-              doc.data().expenses.forEach((ex:any)=>{
-                if (sums.get(ex.categorie)) {
-                  const sum = sums.get(ex.categorie) + Number(ex.expense);
-                  sums.set(ex.categorie, sum);
-                } else {
-                  const add = Number(ex.expense);
-                  sums.set(ex.categorie, add);
-                }
-              })
-            }else{
-              if (sums.get(cat)) {
-                const sum = sums.get(cat) + Number(doc.data().expense);
-                sums.set(cat, sum);
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) => {
+        const chartdata = [
+          {
+            id: "",
+            expenses: [{ categorie: "", expense: "" }],
+            categorie: "",
+            expense: "",
+            timestamp: "",
+            uid: "",
+          },
+        ];
+        snapshot.docs.map((doc) => {
+          if (doc.data().uid === user.uid) {
+            chartdata.push({
+              id: doc.id,
+              expenses: doc.data()?.expenses,
+              categorie: doc.data().categorie,
+              expense: doc.data().expense,
+              timestamp: doc.data().timestamp,
+              uid: user.uid,
+            });
+          }
+        });
+        chartdata.shift();
+        setData(chartdata);
+        const sums = new Map();
+        snapshot.forEach((doc) => {
+          if (doc.data().uid === user.uid) {
+            const sort = doc.data().timestamp.match(/(\d+)\/(\d+)\/(\d+)$/);
+            const cat = doc.data().categorie;
+            const date = new Date();
+            const thisMonth = date.getFullYear() + "/" + (date.getMonth() + 1);
+            if (thisMonth == `${sort[1] + "/" + sort[2]}`) {
+              //今日の日付
+              if (doc.data().expenses) {
+                //複数の場合の分岐
+                doc.data().expenses.forEach((ex: any) => {
+                  if (sums.get(ex.categorie)) {
+                    //sumsにカテゴリーがあれば値を追加
+                    const sum = sums.get(ex.categorie) + Number(ex.expense);
+                    sums.set(ex.categorie, sum);
+                  } else {
+                    const add = Number(ex.expense);
+                    sums.set(ex.categorie, add);
+                  }
+                });
               } else {
-                const add = Number(doc.data().expense);
-                sums.set(cat, add);
+                //単体の場合の分岐
+                if (sums.get(cat)) {
+                  //sumsにカテゴリーがあれば値を追加
+                  const sum = sums.get(cat) + Number(doc.data().expense);
+                  sums.set(cat, sum);
+                } else {
+                  const add = Number(doc.data().expense);
+                  sums.set(cat, add);
+                }
               }
             }
+            setCategorie(Array.from(sums.keys()));
+            setSum(Array.from(sums.values()));
           }
-          setCategorie(Array.from(sums.keys()))
-          setSum(Array.from(sums.values()))
-        }});
+        });
       });
-    }, []);
-    
-    
-    
-    return (
-      <>
+  }, []);
+
+  return (
+    <>
       <Router>
         <Header />
         <Switch>
           <Route path="/user" component={User} />
-          <Route path="/posts" component={Posts}/>
-          <Route path="/show" render={()=><Show showid={showId} setid={setShowId} chartdata={chartData}/>}/>
-          <Route path="/chart" render={() => <Chart chartdata={chartData} />} />
-          <Route path="/" render={() => <Index  chartdata={chartData} sum={sum} categorie={categorie} setshowid={setShowId}  />} />
+          <Route path="/posts" component={Posts} />
+          <Route
+            path="/show"
+            render={() => <Show showid={showId} setid={setShowId} />}
+          />
+          <Route path="/chart" component={Chart} />
+          <Route
+            path="/"
+            render={() => (
+              <Index sum={sum} categorie={categorie} setshowid={setShowId} />
+            )}
+          />
         </Switch>
       </Router>
     </>

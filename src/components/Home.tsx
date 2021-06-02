@@ -1,7 +1,6 @@
 import React from "react";
 import { Typography,Grid,Paper } from "@material-ui/core";
 import LocalAtmIcon from "@material-ui/icons/LocalAtm";
-import "../sass/style.scss";
 
 const Home: React.FC = () => {
   return (

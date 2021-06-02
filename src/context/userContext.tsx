@@ -1,11 +1,5 @@
 import React, { useContext, createContext, useState } from "react";
 
-type Opetype = {
-  login: (authUser: any) => void;
-  logout: () => void;
-  updateUserProfile: (authUser: any) => void;
-};
-
 type USER = {
   uid: string;
   photoURL: string;
@@ -18,10 +12,10 @@ export const AuthContext = createContext<USER>({
   displayName: "",
 });
 
-export const AuthOpeContext = createContext<Opetype>({
-  login: () => console.error("Providerを指定してください"),
+export const AuthOpeContext = createContext({
+  login: (_: any) => console.error("Providerを指定してください"),
   logout: () => console.error("Providerを指定してください"),
-  updateUserProfile: () => console.error("Providerを指定してください"),
+  updateUserProfile: (_: any) => console.error("Providerを指定してください"),
 });
 
 const UserProvider: React.FC = ({ children }) => {
@@ -61,6 +55,7 @@ const UserProvider: React.FC = ({ children }) => {
 
 export const useLogin = () => useContext(AuthOpeContext).login;
 export const useLogout = () => useContext(AuthOpeContext).logout;
-export const useUpdateUserProfile = () => useContext(AuthOpeContext).updateUserProfile;
+export const useUpdateUserProfile = () =>
+  useContext(AuthOpeContext).updateUserProfile;
 
 export default UserProvider;
