@@ -15,6 +15,7 @@ const Feed: React.FC = () => {
         <Router>
           <Header />
           <Switch>
+            {/*show,+inpu,Posts,+inputは変更する必要がある*/}
             <Route path="/user" component={User} />
             <Route path="/posts" component={Posts} />
             <Route path="/show" render={() => <Show />} />

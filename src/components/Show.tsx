@@ -3,21 +3,19 @@ import ShowInput from "./ShowInput";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import { Grid } from "@material-ui/core";
-import { DataContext, useSetShowId } from "../context/dataContext";
+import {
+  DataContext,
+  useSetShowId,
+  useSetExpenses,
+} from "../context/dataContext";
 
 const Show: React.FC = () => {
-  const data = useContext(DataContext).data;
   const showid = useContext(DataContext).showid;
   const setshowid = useSetShowId();
   const history = useHistory();
-  const [addresses, setAddresses] = React.useState(["address.0"]);
   const [update, setUpdate] = useState<boolean>(false);
-  const [expenses, setExpenses] = useState([
-    {
-      categorie: "",
-      expense: "",
-    },
-  ]);
+  const expenses = useContext(DataContext).expenses;
+  const setexpenses = useSetExpenses();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,7 +34,7 @@ const Show: React.FC = () => {
       expense: sum,
       categorie: cat,
     });
-    setExpenses([
+    setexpenses([
       {
         categorie: "",
         expense: "",
@@ -52,36 +50,17 @@ const Show: React.FC = () => {
   };
 
   const addAddress = () => {
-    const newAddresses = [...addresses];
-    newAddresses.push(`address.${addresses.length}`);
-    setAddresses(newAddresses);
-    const cpex = [...expenses];
-    cpex.push({ categorie: "", expense: "" });
-    setExpenses(cpex);
+    const ec = expenses.slice();
+    ec.push({ categorie: "", expense: "" });
+    setexpenses(ec);
   };
 
   const removeAddress = () => {
-    addresses.pop();
-    expenses.pop();
+    const ec = expenses.slice();
+    ec.pop();
+    setexpenses(ec);
     setUpdate(update ? false : true);
   };
-
-  useEffect(() => {
-    if (showid) {
-      data.map((doc) => {
-        if (Object.is(doc.id, showid)) {
-          setExpenses(doc.expenses);
-          doc.expenses.forEach((expense: any, index: number) => {
-            const address = `address.${index}`;
-            addresses.splice(index, 1, address);
-            setAddresses(addresses);
-          });
-        }
-      });
-    } else {
-      history.push("/");
-    }
-  }, []);
 
   return (
     <Grid container className="container">
@@ -92,27 +71,20 @@ const Show: React.FC = () => {
             <label>カテゴリー</label>
             <label>金額</label>
           </div>
-          {addresses.map((expense: any, index) => {
+          {expenses.map((expense: any, index) => {
             return (
               <div key={index}>
-                <ShowInput
-                  index={index}
-                  expenses={expenses}
-                  setEx={setExpenses}
-                  showid={showid}
-                />
+                <ShowInput index={index} />
               </div>
             );
           })}
         </form>
-        {expenses.slice(-1)[0].categorie && expenses.slice(-1)[0].expense && (
-          <div>
-            <a className="xform-button" onClick={addAddress}>
-              +
-            </a>
-            <a onClick={removeAddress}>-</a>
-          </div>
-        )}
+        <div>
+          <a className="xform-button" onClick={addAddress}>
+            +
+          </a>
+          <a onClick={removeAddress}>-</a>
+        </div>
         <button className="xform-button" onClick={handleDelete}>
           delete
         </button>

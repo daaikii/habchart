@@ -9,6 +9,7 @@ const Chart: React.FC = () => {
   const [sum, setSum] = useState<number[]>([]);
 
   useEffect(() => {
+    /*-------------------------<棒グラフのデータ生成>-----------------------*/
     const sums = new Map();
     data.forEach((doc) => {
       const sort = doc.timestamp.match(/(\d+)\/(\d+)\/(\d+)$/);
@@ -28,6 +29,7 @@ const Chart: React.FC = () => {
     const arrval = Array.from(sums.values());
     arrval.reverse();
     setSum(arrval);
+    /*-------------------------</棒グラフのデータ生成>-----------------------*/
   }, []);
   const graphData = {
     labels: label,

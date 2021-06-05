@@ -1,43 +1,33 @@
-import React,{useState} from 'react'
+import React, { useState, useContext } from "react";
+import { DataContext, useSetExpenses } from "../context/dataContext";
 
-type PROPS={
-  index:number;
+type PROPS = {
+  index: number;
+};
 
-  expenses: {
-    categorie: string;
-    expense: string;
-  }[];
-
-  setEx:React.Dispatch<React.SetStateAction<{
-    categorie: string;
-    expense: string;
-  }[]>>;
-
-  valid:boolean
-  
-  setvalid:React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const Input:React.FC<PROPS> = ({index,expenses,setEx}) => {
-  const [categorie,setCategorie]=useState("")
-  const [expense,setExpense]=useState("")
-  const [isNan,setIsNan] =useState<boolean>(false)
+const Input: React.FC<PROPS> = ({ index }) => {
+  const [categorie, setCategorie] = useState("");
+  const [expense, setExpense] = useState("");
+  const [isNan, setIsNan] = useState<boolean>(false);
+  const expenses = useContext(DataContext).expenses;
+  const setexpenses = useSetExpenses();
 
   const categorieChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategorie(e.target.value);
-    console.log(e.target.name)
-    const newArray=expenses.slice()
-    newArray.splice(index,1,{categorie:e.target.value,expense:expense})
-    console.log(expenses)
-    setEx(newArray)
+    const newArray = expenses.slice();
+    newArray.splice(index, 1, { categorie: e.target.value, expense: expense });
+    setexpenses(newArray);
   };
 
   const valueChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isNaN(Number(e.target.value))) {
       setExpense(e.target.value);
-      const newArray=expenses.slice()
-      newArray.splice(index,1,{categorie:categorie,expense:e.target.value})
-      setEx(newArray)
+      const newArray = expenses.slice();
+      newArray.splice(index, 1, {
+        categorie: categorie,
+        expense: e.target.value,
+      });
+      setexpenses(newArray);
       setIsNan(false);
     } else {
       setIsNan(true);
@@ -62,18 +52,21 @@ const Input:React.FC<PROPS> = ({index,expenses,setEx}) => {
           value={expense}
           onChange={valueChange}
           className=""
-          />
+        />
       </div>
-      <span className={isNan ? "inline" : "none" }>
-          ＊数値を入力してください
+      <span className={isNan ? "inline" : "none"}>
+        ＊数値を入力してください
       </span>
-      {expenses.length==index+1&&
-        <button className="xform-button" disabled={isNan||!categorie||!expense}>
+      {expenses.length == index + 1 && (
+        <button
+          className="xform-button"
+          disabled={isNan || !categorie || !expense}
+        >
           保存
         </button>
-      }
+      )}
     </>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;

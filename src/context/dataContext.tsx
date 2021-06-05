@@ -23,12 +23,12 @@ export type DATACONTEXT = {
   showid: string;
   categorie: string[];
   sum: string[];
+  expenses: { categorie: string; expense: string }[];
 };
 
 export const DataOpeContext = createContext({
-  setshowid: (_: string) => {
-    console.log("Providerを指定してください");
-  },
+  setshowid: (_: string) => console.log("Providerを指定してください"),
+  setexpenses: (_: any) => console.log("Providerを指定してください"),
 });
 export const DataContext = createContext<DATACONTEXT>({
   data: [
@@ -41,9 +41,10 @@ export const DataContext = createContext<DATACONTEXT>({
       uid: "",
     },
   ],
-  showid: "値が見つかりません",
+  showid: "",
   categorie: [],
   sum: [],
+  expenses: [{ categorie: "", expense: "" }],
 });
 
 const DataProvider: React.FC = ({ children }) => {
@@ -58,40 +59,38 @@ const DataProvider: React.FC = ({ children }) => {
       uid: "",
     },
   ]);
+  const [expenses, setExpenses] = useState([
+    {
+      categorie: "",
+      expense: "",
+    },
+  ]);
   const [showid, setShowId] = useState("");
   const [categorie, setCategorie] = useState<string[]>([]);
   const [sum, setSum] = useState<string[]>([]);
+
   useEffect(() => {
     db.collection("posts")
       .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) => {
-        const chartdata = [
-          {
-            id: "",
-            expenses: [{ categorie: "", expense: "" }],
-            categorie: "",
-            expense: "",
-            timestamp: "",
-            uid: "",
-          },
-        ];
+        /*-------------------------<index用ののデータ生成>-----------------------*/
+        const chartdata: any = [];
         snapshot.docs.map((doc) => {
           if (doc.data().uid === user.uid) {
-            console.log("該当してます");
             chartdata.push({
               id: doc.id,
               expenses: doc.data()?.expenses,
               categorie: doc.data().categorie,
               expense: doc.data().expense,
               timestamp: doc.data().timestamp,
-              uid: user.uid,
+              uid: doc.data().uid,
             });
           }
-          console.log(doc.data().uid);
-          console.log(user.uid);
         });
-        chartdata.shift();
         setData(chartdata);
+        /*-------------------------</index用ののデータ生成>-----------------------*/
+
+        /*-------------------------<円グラフのデータ生成>-----------------------*/
         const sums = new Map();
         snapshot.forEach((doc) => {
           if (doc.data().uid === user.uid) {
@@ -129,12 +128,21 @@ const DataProvider: React.FC = ({ children }) => {
             setSum(Array.from(sums.values()));
           }
         });
+        /*-------------------------</円グラフのデータ生成>-----------------------*/
       });
   }, []);
-  const setshowid = (id: string) => setShowId(id);
+  const setshowid = (id: string) => {
+    setShowId(id);
+    data.map((doc) => {
+      doc.id == id && setExpenses(doc.expenses);
+      console.log(doc.id == id);
+    });
+  };
+  const setexpenses = (data: any) => setExpenses(data);
+
   return (
-    <DataOpeContext.Provider value={{ setshowid }}>
-      <DataContext.Provider value={{ data, showid, categorie, sum }}>
+    <DataOpeContext.Provider value={{ setshowid, setexpenses }}>
+      <DataContext.Provider value={{ data, showid, categorie, sum, expenses }}>
         {children}
       </DataContext.Provider>
     </DataOpeContext.Provider>
@@ -142,5 +150,6 @@ const DataProvider: React.FC = ({ children }) => {
 };
 
 export const useSetShowId = () => useContext(DataOpeContext).setshowid;
+export const useSetExpenses = () => useContext(DataOpeContext).setexpenses;
 
 export default DataProvider;
