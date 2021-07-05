@@ -109,6 +109,7 @@ const Post: React.FC = () => {
         </Box>
       </div>
       <button
+        className="form-button"
         onClick={() => {
           setReciept(null);
           setNoFile(true);

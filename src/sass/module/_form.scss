@@ -10,6 +10,14 @@
   text-align: center;
   width:300px;
   margin:0;
+  input{
+    outline:none;
+    border:none;
+    border-bottom:1px solid ;
+  }
+  buttun{
+    outline: none;
+  }
   @include mq(tb){
     width:200px
   }

@@ -109,12 +109,12 @@ const Index: React.FC = () => {
           <Post />
         </Grid>
       </Grid>
-      <Grid container justify="center" spacing={10}>
+      <Grid container justify="center">
         <Grid item className="item" xs={7} sm={7} lg={5}>
           <Chart />
         </Grid>
 
-        <Grid item xs={7} sm={7} lg={3}>
+        <Grid item className="item" xs={7} sm={7} lg={4}>
           <Pergraph />
         </Grid>
       </Grid>

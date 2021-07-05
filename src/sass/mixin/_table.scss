@@ -3,9 +3,8 @@
   font-family: Open Sans, sans-serif;
   line-height: 1.25;
   width: 20em;
-  margin:3em auto;
   @include mq(tb){
-    width:40em
+    width:30em
   }
   @include mq(pc){
     width:40em;
