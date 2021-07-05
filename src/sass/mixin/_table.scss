@@ -2,19 +2,17 @@
   border-collapse:collapse;
   font-family: Open Sans, sans-serif;
   line-height: 1.25;
-  margin:5em auto;
-  
   width: 20em;
-  //media
+  margin:3em auto;
   @include mq(tb){
-    width: 40em;
-    margin:1em auto;
+    width:40em
   }
   @include mq(pc){
     width:40em;
-    margin:1em auto;
   }
-
+  @include mq(lg){
+    width:50em;
+  }
   th,td{
     padding: .35em 1em;
     border-bottom:  1px solid #eee;

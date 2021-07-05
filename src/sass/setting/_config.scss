@@ -8,13 +8,12 @@ $color:(
   wh:#ffffff
 )!default;
 
+//backgroundimage
+$bgimg:url(https://source.unsplash.com/random);
+
 @mixin _col($c:main){
   color:#{map-get($color,$c)}!important
 }
-
-
-//background
-$bgimg:url(https://source.unsplash.com/random);
 
 @mixin _bgcol($c:main){
   background-color:#{map-get($color,$c)}!important
@@ -22,8 +21,9 @@ $bgimg:url(https://source.unsplash.com/random);
 
 //mediaquery
 $breakpoints:(
-  tb:(min-width:600px),
-  pc:(min-width:1280px),
+  tb:(min-width:600px),//600までの画面サイズ
+  pc:(min-width:1280px),//1280までの画面サイズ
+  lg:(min-width:1600px),
 )!default;
 
 @mixin mq($breakpoint:tb){

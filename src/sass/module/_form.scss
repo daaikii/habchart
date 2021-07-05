@@ -1,14 +1,19 @@
-.yform{
-  @include form;
-  display:flex;
-  flex-direction:column;
-  text-align:center;
-  align-items: center;
-  margin:1em 1em ;
-}
-.xform{
+.form{
   @include form;
   text-align: center;
-  margin:10px auto;
-  width:30em;
+  margin:50px auto ;
+  padding:10px;
+  width:400px;
+}
+.yform{
+  @include form;
+  text-align: center;
+  width:300px;
+  margin:0;
+  @include mq(tb){
+    width:200px
+  }
+  @include mq(pc){
+    width:200px;
+  }
 }

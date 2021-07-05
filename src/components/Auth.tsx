@@ -17,7 +17,7 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import EmailIcon from "@material-ui/icons/Email";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 const Auth: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -61,13 +61,28 @@ const Auth: React.FC = () => {
         .map((n) => S[n % S.length])
         .join("");
       const fileName = randomChar + "_" + avatarImage.name;
-      await storage.ref(`avatars/${fileName}`).put(avatarImage);
-      url = await storage.ref("avatars").child(fileName).getDownloadURL();
+      await storage
+        .ref(`avatars/${fileName}`)
+        .put(avatarImage)
+        .catch((error) => {
+          alert(error);
+        });
+      url = await storage
+        .ref("avatars")
+        .child(fileName)
+        .getDownloadURL()
+        .catch((error) => {
+          alert(error);
+        });
     }
-    await authUser.user?.updateProfile({
-      displayName: username,
-      photoURL: url,
-    });
+    await authUser.user
+      ?.updateProfile({
+        displayName: username,
+        photoURL: url,
+      })
+      .catch((error) => {
+        alert(error);
+      });
     updateUserProfile({
       displayName: username,
       photoUrl: url,
@@ -89,7 +104,7 @@ const Auth: React.FC = () => {
           <Typography component="h1" variant="h5">
             {isLogin ? "Login" : "Register"}
           </Typography>
-          
+
           <form>
             {!isLogin && (
               <>
@@ -111,12 +126,11 @@ const Auth: React.FC = () => {
                 <Box textAlign="center">
                   <IconButton>
                     <label>
-                      <AccountCircleIcon
+                      userIcon
+                      <AddAPhotoIcon
                         fontSize="large"
                         className={
-                          avatarImage
-                            ? "login-loadIcon"
-                            : "login-nomalIcon"
+                          avatarImage ? "login-loadIcon" : "login-nomalIcon"
                         }
                       />
                       <input
@@ -195,11 +209,7 @@ const Auth: React.FC = () => {
             </Button>
             <Grid container>
               <Grid item xs className="login-reset">
-                <span
-                  onClick={() => setOpenModal(true)}
-                >
-                  Forgot password?
-                </span>
+                <span onClick={() => setOpenModal(true)}>Forgot password?</span>
               </Grid>
               <Grid item>
                 <span
@@ -222,23 +232,21 @@ const Auth: React.FC = () => {
           </form>
           <Modal open={openModal} onClose={() => setOpenModal(false)}>
             <div className="modal">
-              <div className="center">
-                <TextField
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  type="email"
-                  name="email"
-                  label="Reset E-mail"
-                  value={resetEmail}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setResetEmail(e.target.value);
-                  }}
-                />
-                <IconButton onClick={sendResetEmail}>
-                  <SendIcon />
-                </IconButton>
-              </div>
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                type="email"
+                name="email"
+                label="Reset E-mail"
+                value={resetEmail}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setResetEmail(e.target.value);
+                }}
+              />
+              <IconButton onClick={sendResetEmail}>
+                <SendIcon />
+              </IconButton>
             </div>
           </Modal>
         </div>

@@ -13,10 +13,10 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import EmailIcon from "@material-ui/icons/Email";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { auth, storage } from "../firebase";
 import firebase from "firebase/app";
 import { useHistory } from "react-router-dom";
+import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 const User: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -46,13 +46,11 @@ const User: React.FC = () => {
       });
   };
   const deleteAcount = () => {
-    if( window.confirm("削除しますか？") ) {
-      user?.delete()
-      .catch((err) => {
+    if (window.confirm("削除しますか？")) {
+      user?.delete().catch((err) => {
         alert(err.message);
       });
-    }
-    else {
+    } else {
       alert("キャンセルしました");
     }
   };
@@ -66,14 +64,29 @@ const User: React.FC = () => {
         .map((n) => S[n % S.length])
         .join("");
       const fileName = randomChar + "_" + avatarImage.name;
-      await storage.ref(`avatars/${fileName}`).put(avatarImage);
-      url = await storage.ref("avatars").child(fileName).getDownloadURL();
+      await storage
+        .ref(`avatars/${fileName}`)
+        .put(avatarImage)
+        .catch((error) => {
+          alert(error);
+        });
+      url = await storage
+        .ref("avatars")
+        .child(fileName)
+        .getDownloadURL()
+        .catch((error) => {
+          alert(error);
+        });
     }
-    await user?.updateProfile({
-      displayName: username,
-      photoURL: url,
-    });
-    history.push("/")
+    await user
+      ?.updateProfile({
+        displayName: username,
+        photoURL: url,
+      })
+      .catch((error) => {
+        alert(error);
+      });
+    history.push("/");
   };
 
   return (
@@ -81,7 +94,7 @@ const User: React.FC = () => {
       item
       xs={8}
       sm={8}
-      md={5}
+      md={6}
       component={Paper}
       elevation={2}
       square
@@ -114,12 +127,11 @@ const User: React.FC = () => {
             <Box textAlign="center">
               <IconButton>
                 <label>
-                  <AccountCircleIcon
+                  userIcon
+                  <AddAPhotoIcon
                     fontSize="large"
                     className={
-                      avatarImage
-                        ? "login-loadIcon"
-                        : "login-nomalIcon"
+                      avatarImage ? "login-loadIcon" : "login-nomalIcon"
                     }
                   />
                   <input
@@ -156,23 +168,21 @@ const User: React.FC = () => {
         </Button>
         <Modal open={openModal} onClose={() => setOpenModal(false)}>
           <div className="modal">
-            <div className="center">
-              <TextField
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                type="email"
-                name="email"
-                label="Reset E-mail"
-                value={resetEmail}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setResetEmail(e.target.value);
-                }}
-              />
-              <IconButton onClick={sendResetEmail}>
-                <SendIcon />
-              </IconButton>
-            </div>
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              type="email"
+              name="email"
+              label="Reset E-mail"
+              value={resetEmail}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setResetEmail(e.target.value);
+              }}
+            />
+            <IconButton onClick={sendResetEmail}>
+              <SendIcon />
+            </IconButton>
           </div>
         </Modal>
       </div>

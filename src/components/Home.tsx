@@ -1,25 +1,25 @@
 import React from "react";
-import { Typography,Grid,Paper } from "@material-ui/core";
+import { Typography, Grid, Paper } from "@material-ui/core";
 import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 
 const Home: React.FC = () => {
   return (
-    <Grid container component={Paper} className="container">
-      <Grid item className="middle">
-        <div className="home">
-          <Typography variant="h4" className="home-text">HAB</Typography>
-          <LocalAtmIcon className="home-icon"/>
+    <div className="container home">
+      <div className="home-wrapper">
+        <div className="home-main">
+          <Typography variant="h4" className="home-text">
+            HAB
+          </Typography>
+          <LocalAtmIcon className="home-icon" />
         </div>
-        <div>
+        <div className="home-message">
           <h1>
             このアプリは<br></br>家計簿アプリです
           </h1>
         </div>
-      </Grid>
-      <Grid item ></Grid>
-    </Grid>
+      </div>
+    </div>
   );
 };
 
 export default Home;
-

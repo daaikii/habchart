@@ -21,8 +21,10 @@ export type DATACONTEXT = {
     uid: string;
   }[];
   showid: string;
-  categorie: string[];
-  sum: string[];
+  perCategorie: string[];
+  perSum: number[];
+  chartCategorie: string[];
+  chartSum: number[];
   expenses: { categorie: string; expense: string }[];
 };
 
@@ -42,8 +44,10 @@ export const DataContext = createContext<DATACONTEXT>({
     },
   ],
   showid: "",
-  categorie: [],
-  sum: [],
+  perCategorie: [],
+  perSum: [],
+  chartCategorie: [],
+  chartSum: [],
   expenses: [{ categorie: "", expense: "" }],
 });
 
@@ -66,14 +70,17 @@ const DataProvider: React.FC = ({ children }) => {
     },
   ]);
   const [showid, setShowId] = useState("");
-  const [categorie, setCategorie] = useState<string[]>([]);
-  const [sum, setSum] = useState<string[]>([]);
+  const [perCategorie, setPerCategorie] = useState<string[]>([]);
+  const [perSum, setPerSum] = useState<number[]>([]);
+  const [chartCategorie, setChartCategorie] = useState<string[]>([]);
+  const [chartSum, setChartSum] = useState<number[]>([]);
 
   useEffect(() => {
     db.collection("posts")
       .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) => {
         /*-------------------------<index用ののデータ生成>-----------------------*/
+
         const chartdata: any = [];
         snapshot.docs.map((doc) => {
           if (doc.data().uid === user.uid) {
@@ -124,25 +131,55 @@ const DataProvider: React.FC = ({ children }) => {
                 }
               }
             }
-            setCategorie(Array.from(sums.keys()));
-            setSum(Array.from(sums.values()));
+            setPerCategorie(Array.from(sums.keys()));
+            setPerSum(Array.from(sums.values()));
           }
         });
         /*-------------------------</円グラフのデータ生成>-----------------------*/
+        /*-------------------------<棒グラフのデータ生成>-----------------------*/
+        const sums0 = new Map();
+        chartdata.forEach((doc: any) => {
+          const sort = doc.timestamp.match(/(\d+)\/(\d+)\/(\d+)$/);
+          const date = `${sort[1] + "/" + sort[2]}`;
+          if (sums0.get(date)) {
+            //sumsにカテゴリーがあれば値を追加
+            const sum = sums0.get(date) + Number(doc.expense);
+            sums0.set(date, sum);
+          } else {
+            const add = Number(doc.expense);
+            sums0.set(date, add);
+          }
+          const arrkey = Array.from(sums0.keys());
+          arrkey.reverse();
+          setChartCategorie(arrkey);
+          const arrval = Array.from(sums0.values());
+          arrval.reverse();
+          setChartSum(arrval);
+        });
+        /*-------------------------</棒グラフのデータ生成>-----------------------*/
       });
   }, []);
   const setshowid = (id: string) => {
     setShowId(id);
     data.map((doc) => {
       doc.id == id && setExpenses(doc.expenses);
-      console.log(doc.id == id);
     });
   };
   const setexpenses = (data: any) => setExpenses(data);
 
   return (
     <DataOpeContext.Provider value={{ setshowid, setexpenses }}>
-      <DataContext.Provider value={{ data, showid, categorie, sum, expenses }}>
+      <DataContext.Provider
+        value={{
+          data,
+          showid,
+          perCategorie,
+          perSum,
+          chartCategorie,
+          chartSum,
+          expenses,
+        }}
+      >
         {children}
       </DataContext.Provider>
     </DataOpeContext.Provider>

@@ -2,13 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import { AuthContext } from "../context/userContext";
 import { auth } from "../firebase";
 import { useHistory } from "react-router-dom";
-import {
-  AppBar,
-  Avatar,
-  Toolbar,
-  Button,
-  Typography,
-} from "@material-ui/core";
+import { AppBar, Avatar, Toolbar, Button, Typography } from "@material-ui/core";
 import DehazeIcon from "@material-ui/icons/Dehaze";
 import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 
@@ -28,19 +22,16 @@ const Header: React.FC = () => {
   const handleChangeIndex = () => {
     history.push("/");
   };
-  const changeChart = () => {
-    history.push("/chart");
-  };
   const changeUser = () => {
     history.push("/user");
   };
-  const changePosts = () =>{
-    history.push("/posts")
-  }
+  const changePosts = () => {
+    history.push("/posts");
+  };
   useEffect(() => {
     isOpen && menuRef.current.focus();
   }, [isOpen]);
-  
+
   return (
     <>
       <AppBar elevation={0} position="static">
@@ -72,16 +63,11 @@ const Header: React.FC = () => {
           tabIndex={1}
         >
           <div className="header-listuser" onClick={changeUser}>
-            <div>
-              <Avatar src={user.photoURL}></Avatar>
-            </div>
+            <Avatar src={user.photoURL}></Avatar>
             <p>{user.displayName}</p>
           </div>
           <li className="header-listitems" onClick={changePosts}>
             入力フォーム
-          </li>
-          <li className="header-listitems" onClick={changeChart}>
-            月別グラフ
           </li>
           <li className="header-listitems" onClick={handleLogout}>
             ログアウト

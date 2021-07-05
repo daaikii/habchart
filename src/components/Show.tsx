@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import ShowInput from "./ShowInput";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import { Grid } from "@material-ui/core";
+import { useForm } from "react-hook-form";
 import {
   DataContext,
   useSetShowId,
@@ -16,24 +16,44 @@ const Show: React.FC = () => {
   const [update, setUpdate] = useState<boolean>(false);
   const expenses = useContext(DataContext).expenses;
   const setexpenses = useSetExpenses();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {
+    expenses.map((expense, index) => {
+      setValue(`categorie${index}`, expense.categorie);
+      setValue(`expense${index}`, expense.expense);
+    });
+  });
+
+  const onSubmit = (e: any) => {
     let sum = 0;
     let cat = "";
-    expenses.map((doc) => {
-      sum = sum + Number(doc.expense);
+    expenses.forEach((doc, index) => {
+      sum = sum + Number(e[`expense${index}`]);
       if (cat == "") {
-        cat = doc.categorie;
+        cat = e[`categorie${index}`];
       } else {
-        cat = cat + "/" + doc.categorie;
+        cat = cat + "/" + e[`categorie${index}`];
       }
     });
-    db.collection("posts").doc(showid).update({
-      expenses,
-      expense: sum,
-      categorie: cat,
-    });
+    db.collection("posts")
+      .doc(showid)
+      .update({
+        expenses: expenses.map((expense, index) => ({
+          categorie: e[`categorie${index}`],
+          expense: e[`expense${index}`],
+        })),
+        expense: sum,
+        categorie: cat,
+      })
+      .catch((error) => {
+        alert(error);
+      });
     setexpenses([
       {
         categorie: "",
@@ -45,7 +65,12 @@ const Show: React.FC = () => {
   };
 
   const handleDelete = () => {
-    db.collection("posts").doc(showid).delete();
+    db.collection("posts")
+      .doc(showid)
+      .delete()
+      .catch((error) => {
+        alert(error);
+      });
     history.push("/");
   };
 
@@ -63,33 +88,64 @@ const Show: React.FC = () => {
   };
 
   return (
-    <Grid container className="container">
-      <div className="xform">
-        <form onSubmit={handleSubmit}>
-          <h4 className="xform-title">入力フォーム</h4>
-          <div className="xform-input">
-            <label>カテゴリー</label>
-            <label>金額</label>
+    <>
+      <div className="container">
+        <div className="form">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="form-input">
+              <h2 className="form-title">入力フォーム</h2>
+              <table className="form-table">
+                <thead>
+                  <tr>
+                    <th>カテゴリー</th>
+                    <th>金額</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenses.map((expense: any, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>
+                          <input
+                            {...register(`categorie${index}`, {
+                              required: true,
+                            })}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            {...register(`expense${index}`, {
+                              valueAsNumber: true,
+                              required: true,
+                              pattern: {
+                                value: /^[0-9]+$/,
+                                message: "整数で入力してください",
+                              },
+                            })}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <button className="form-button">保存</button>
+            </div>
+          </form>
+          <div>
+            <button className="form-change plus" onClick={addAddress}>
+              +
+            </button>
+            <button className="form-change minus" onClick={removeAddress}>
+              -
+            </button>
           </div>
-          {expenses.map((expense: any, index) => {
-            return (
-              <div key={index}>
-                <ShowInput index={index} />
-              </div>
-            );
-          })}
-        </form>
-        <div>
-          <a className="xform-button" onClick={addAddress}>
-            +
-          </a>
-          <a onClick={removeAddress}>-</a>
+          <button className="form-change" onClick={handleDelete}>
+            delete
+          </button>
         </div>
-        <button className="xform-button" onClick={handleDelete}>
-          delete
-        </button>
       </div>
-    </Grid>
+    </>
   );
 };
 export default Show;

@@ -3,8 +3,8 @@ import { Doughnut } from "react-chartjs-2";
 import { DataContext } from "../context/dataContext";
 
 const Pergraph: React.FC = () => {
-  const categorie = useContext(DataContext).categorie;
-  const sum = useContext(DataContext).sum;
+  const categorie = useContext(DataContext).perCategorie;
+  const sum = useContext(DataContext).perSum;
   const graphData = {
     datasets: [
       {
@@ -32,7 +32,7 @@ const Pergraph: React.FC = () => {
   };
   const option = {
     plugin: {
-      labels: {
+      doughnutlabels: {
         text: "消費割合",
         color: "#666666",
         font: {
@@ -42,7 +42,8 @@ const Pergraph: React.FC = () => {
     },
   };
   return (
-    <div className="">
+    <div className="doghnut">
+      <h4 className="doghnut-title">今月の使用割合</h4>
       <Doughnut data={graphData} options={option} />
     </div>
   );

@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import Input from "./Input";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
-import { Grid } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import { AuthContext } from "../context/userContext";
 import { DataContext, useSetExpenses } from "../context/dataContext";
+import { useForm } from "react-hook-form";
 
 const Posts: React.FC = () => {
   const history = useHistory();
@@ -12,6 +12,11 @@ const Posts: React.FC = () => {
   const user = useContext(AuthContext);
   const expenses = useContext(DataContext).expenses;
   const setexpenses = useSetExpenses();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const addAddress = () => {
     const ec = expenses.slice();
@@ -20,12 +25,13 @@ const Posts: React.FC = () => {
   };
 
   const removeAddress = () => {
-    expenses.pop();
+    const ec = expenses.slice();
+    ec.pop();
+    setexpenses(ec);
     setUpdate(update ? false : true);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = (e: any) => {
     const newdate = new Date();
     const timestamp =
       newdate.getFullYear() +
@@ -35,21 +41,28 @@ const Posts: React.FC = () => {
       newdate.getDate();
     let sum = 0;
     let cat = "";
-    expenses.map((doc) => {
-      sum = sum + Number(doc.expense);
+    expenses.forEach((doc, index) => {
+      sum = sum + Number(e[`expense${index}`]);
       if (cat == "") {
-        cat = doc.categorie;
+        cat = e[`categorie${index}`];
       } else {
-        cat = cat + "/" + doc.categorie;
+        cat = cat + "/" + e[`categorie${index}`];
       }
     });
-    db.collection("posts").add({
-      expenses,
-      expense: sum,
-      categorie: cat,
-      timestamp: timestamp,
-      uid: user.uid,
-    });
+    db.collection("posts")
+      .add({
+        expenses: expenses.map((expense, index) => ({
+          categorie: e[`categorie${index}`],
+          expense: e[`expense${index}`],
+        })),
+        expense: sum,
+        categorie: cat,
+        timestamp: timestamp,
+        uid: user.uid,
+      })
+      .catch((error) => {
+        alert(error);
+      });
     setexpenses([
       {
         categorie: "",
@@ -69,30 +82,56 @@ const Posts: React.FC = () => {
   }, []);
 
   return (
-    <Grid container className="container">
-      <div className="xform">
-        <form onSubmit={handleSubmit}>
-          <h4 className="xform-title">入力フォーム</h4>
-          <div className="xform-input">
-            <label>カテゴリー</label>
-            <label>金額</label>
+    <div className="container">
+      <div className="form">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h2 className="form-title">入力フォーム</h2>
+          <div className="form-input">
+            <table className="form-table">
+              <thead>
+                <tr>
+                  <th>カテゴリー</th>
+                  <th>金額</th>
+                </tr>
+              </thead>
+              <tbody>
+                {expenses.map((expense: any, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>
+                        <input
+                          {...register(`categorie${index}`, { required: true })}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          {...register(`expense${index}`, {
+                            required: true,
+                            pattern: {
+                              value: /^[0-9]+$/,
+                              message: "整数で入力してください",
+                            },
+                          })}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-          {expenses.map((address, index) => {
-            return (
-              <div key={index}>
-                <Input index={index} />
-              </div>
-            );
-          })}
+          <button className="form-button">保存</button>
         </form>
         <div>
-          <a className="" onClick={addAddress}>
+          <button className="form-change plus" onClick={addAddress}>
             +
-          </a>
-          <a onClick={removeAddress}>-</a>
+          </button>
+          <button className="form-change minus" onClick={removeAddress}>
+            -
+          </button>
         </div>
       </div>
-    </Grid>
+    </div>
   );
 };
 

@@ -4,35 +4,11 @@ import { Grid } from "@material-ui/core";
 import { DataContext } from "../context/dataContext";
 
 const Chart: React.FC = () => {
-  const data = useContext(DataContext).data;
-  const [label, setLabels] = useState<string[]>([]);
-  const [sum, setSum] = useState<number[]>([]);
+  const categorie = useContext(DataContext).chartCategorie;
+  const sum = useContext(DataContext).chartSum;
 
-  useEffect(() => {
-    /*-------------------------<棒グラフのデータ生成>-----------------------*/
-    const sums = new Map();
-    data.forEach((doc) => {
-      const sort = doc.timestamp.match(/(\d+)\/(\d+)\/(\d+)$/);
-      const date = `${sort[1] + "/" + sort[2]}`;
-      if (sums.get(date)) {
-        //sumsにカテゴリーがあれば値を追加
-        const sum = sums.get(date) + Number(doc.expense);
-        sums.set(date, sum);
-      } else {
-        const add = Number(doc.expense);
-        sums.set(date, add);
-      }
-    });
-    const arrkey = Array.from(sums.keys());
-    arrkey.reverse();
-    setLabels(arrkey);
-    const arrval = Array.from(sums.values());
-    arrval.reverse();
-    setSum(arrval);
-    /*-------------------------</棒グラフのデータ生成>-----------------------*/
-  }, []);
   const graphData = {
-    labels: label,
+    labels: categorie,
     datasets: [
       {
         backgroundColor: "#1e90ff",
@@ -59,13 +35,7 @@ const Chart: React.FC = () => {
       ],
     },
   };
-  return (
-    <Grid container justify="center" className="container">
-      <Grid item xs={12} sm={10} lg={10} className="freearound">
-        <Bar data={graphData} options={graphOption} />
-      </Grid>
-    </Grid>
-  );
+  return <Bar data={graphData} options={graphOption} />;
 };
 
 export default Chart;
