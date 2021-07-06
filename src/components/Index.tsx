@@ -85,7 +85,7 @@ const Index: React.FC = () => {
   return (
     <div className="container">
       <Grid container justify="center">
-        <Grid item className="item" lg={6}>
+        <Grid item className="item" lg={5}>
           <table className="table">
             <thead>
               <tr>
@@ -110,11 +110,11 @@ const Index: React.FC = () => {
         </Grid>
       </Grid>
       <Grid container justify="center">
-        <Grid item className="item" xs={7} sm={7} lg={5}>
+        <Grid item className="item" xs={7} sm={7} lg={4}>
           <Chart />
         </Grid>
 
-        <Grid item className="item" xs={7} sm={7} lg={4}>
+        <Grid item className="item" xs={7} sm={7} lg={3}>
           <Pergraph />
         </Grid>
       </Grid>

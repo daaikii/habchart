@@ -19,7 +19,8 @@
     outline: none;
   }
   @include mq(tb){
-    width:200px
+    width:200px;
+    margin-left: 20px;
   }
   @include mq(pc){
     width:200px;
